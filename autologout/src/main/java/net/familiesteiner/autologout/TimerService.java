@@ -18,6 +18,8 @@ public class TimerService {
     private static Logger LOG = LoggerFactory.getLogger(TimerService.class);
     public TimerService() {
         timer = new Timer(true);
+    }
+    public void start() {
         timer.schedule(new TimerTask() {
 
             @Override
@@ -27,8 +29,8 @@ public class TimerService {
         }, 0, 1000);
     }
     
-    public void destroy() {
-        LOG.info("destroy");
+    public void stop() {
+        LOG.info("stop");
         timer.cancel();
     }
 }
