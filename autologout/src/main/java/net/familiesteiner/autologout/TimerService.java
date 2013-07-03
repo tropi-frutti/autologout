@@ -4,6 +4,7 @@
  */
 package net.familiesteiner.autologout;
 
+import com.google.inject.Inject;
 import java.util.Timer;
 import java.util.TimerTask;
 import org.slf4j.Logger;
@@ -14,9 +15,17 @@ import org.slf4j.LoggerFactory;
  * @author bertel
  */
 public class TimerService {
+    SessionProcessorInterface sessionProcessor = null;
+
+    public SessionProcessorInterface getSessionProcessor() {
+        return sessionProcessor;
+    }
     Timer timer = null;
     private static Logger LOG = LoggerFactory.getLogger(TimerService.class);
-    public TimerService() {
+    
+    @Inject
+    public TimerService(SessionProcessorInterface sessionProcessor) {
+        this.sessionProcessor = sessionProcessor;
         timer = new Timer(true);
     }
     public void start() {
@@ -25,8 +34,10 @@ public class TimerService {
             @Override
             public void run() {
                 LOG.info("run");
+                sessionProcessor.ping();
+                sessionProcessor.traceCurrentActiveSessions();
             }
-        }, 0, 1000);
+        }, 0, 60*1000);
     }
     
     public void stop() {

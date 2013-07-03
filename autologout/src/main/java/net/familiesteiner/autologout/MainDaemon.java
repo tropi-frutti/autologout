@@ -1,10 +1,10 @@
 package net.familiesteiner.autologout;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import org.apache.commons.daemon.Daemon;
 import org.apache.commons.daemon.DaemonContext;
 import org.apache.commons.daemon.DaemonInitException;
-import org.freedesktop.ConsoleKit.Seat;
-import org.freedesktop.dbus.DBusSigHandler;
 import org.freedesktop.dbus.exceptions.DBusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  * Hello world!
  *
  */
-public class MainDaemon implements Daemon, DBusSigHandler<Seat.SessionAdded>
+public class MainDaemon implements Daemon
 {
     TimerService timerService;
     
@@ -40,12 +40,9 @@ public class MainDaemon implements Daemon, DBusSigHandler<Seat.SessionAdded>
         logger.info("Goodbye");
     }
     
-    public void handle(Seat.SessionAdded t) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
     public void init(DaemonContext context) throws DaemonInitException, Exception {
-        timerService = new TimerService();
+        Injector injector = Guice.createInjector(new AutologoutModule());
+        timerService = injector.getInstance(TimerService.class);
     }
 
     public void start() throws Exception {
