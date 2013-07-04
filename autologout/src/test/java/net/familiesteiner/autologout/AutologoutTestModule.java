@@ -4,11 +4,10 @@
  */
 package net.familiesteiner.autologout;
 
-import net.familiesteiner.autologout.*;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import net.familiesteiner.autologout.mock.ManagerMock;
 import org.freedesktop.ConsoleKit.Manager;
+import org.mockito.Mockito;
 
 /**
  *
@@ -24,7 +23,7 @@ public class AutologoutTestModule extends AbstractModule {
     
     @Provides
     Manager provideManager() {
-        return new ManagerMock();
+        return Mockito.mock(Manager.class);
     }
     
 }
