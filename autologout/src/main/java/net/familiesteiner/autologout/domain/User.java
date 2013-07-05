@@ -12,6 +12,8 @@ import org.freedesktop.dbus.UInt32;
  */
 public class User {
 
+    long uid;
+    
     @Override
     public int hashCode() {
         int hash = 3;
@@ -33,19 +35,16 @@ public class User {
         }
         return true;
     }
-    long uid;
 
     public long getUid() {
         return uid;
     }
 
-    public void setUid(long uid) {
-        this.uid = uid;
-    }
-    public User(UInt32 userId) {
+   public User(UInt32 userId) {
         this(userId.longValue());
     }
     public User(long userId) {
         uid = userId;
     }
-}
+}   
+ 
