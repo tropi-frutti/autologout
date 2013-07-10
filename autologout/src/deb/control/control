@@ -4,6 +4,7 @@ Section: misc
 Priority: optional
 Architecture: all
 Depends: default-jre (>= 1:1.6)
+Depends: jsvc (>= 1.0.2)
 Maintainer: Norbert Steiner <norbert@familie-steiner.net>
 Description: autologout child control
 Distribution: development
