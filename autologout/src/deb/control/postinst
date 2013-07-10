@@ -1,2 +1,2 @@
 #!/bin/sh
-update-rc.d autologout defaults
+update-rc.d -f autologout defaults

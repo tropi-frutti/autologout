@@ -1,2 +1,2 @@
 #!/bin/sh
-update-rc.d autologout remove
+update-rc.d -f autologout remove
