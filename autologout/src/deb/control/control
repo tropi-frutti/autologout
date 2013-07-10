@@ -1,0 +1,9 @@
+Package: [[name]]
+Version: [[version]]
+Section: misc
+Priority: optional
+Architecture: all
+Depends: default-jre (>= 1:1.6)
+Maintainer: Norbert Steiner <norbert@familie-steiner.net>
+Description: autologout child control
+Distribution: development
