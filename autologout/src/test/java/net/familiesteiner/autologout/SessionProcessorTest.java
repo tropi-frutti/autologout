@@ -21,6 +21,7 @@ import static org.mockito.Mockito.*;
  */
 public class SessionProcessorTest {
     DBusAdapterInterface dbusAdapter = null;
+    DataAccessInterface dataAccess = null;
     
     public SessionProcessorTest() {
     }
@@ -36,6 +37,7 @@ public class SessionProcessorTest {
     @Before
     public void setUp() {
         dbusAdapter = mock(DBusAdapterInterface.class);
+        dataAccess = mock(DataAccessInterface.class);
     }
     
     @After
@@ -48,7 +50,7 @@ public class SessionProcessorTest {
     @Test
     public void testPing() {
         System.out.println("ping");
-        SessionProcessor instance = new SessionProcessor(dbusAdapter);
+        SessionProcessor instance = new SessionProcessor(dbusAdapter, dataAccess);
         instance.ping();
     }
 
@@ -61,7 +63,7 @@ public class SessionProcessorTest {
         Set<User> users = new HashSet<User>();
         users.add(new User(123));
         when(dbusAdapter.identifyActiveSessions()).thenReturn(users);
-        SessionProcessor instance = new SessionProcessor(dbusAdapter);
+        SessionProcessor instance = new SessionProcessor(dbusAdapter, dataAccess);
         instance.traceCurrentActiveSessions();
     }
 }

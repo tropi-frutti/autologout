@@ -6,6 +6,7 @@ package net.familiesteiner.autologout;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import java.io.File;
 import org.freedesktop.ConsoleKit.Manager;
 import org.freedesktop.dbus.DBusConnection;
 import org.freedesktop.dbus.exceptions.DBusException;
@@ -20,6 +21,13 @@ public class AutologoutModule extends AbstractModule {
     protected void configure() {
         bind(SessionProcessorInterface.class).to(SessionProcessor.class);
         bind(DBusAdapterInterface.class).to(DBusAdapter.class);
+    }
+    
+    @Provides
+    DataAccess provideDataAccess() {
+        DataAccess dataAccess = new DataAccess();
+        dataAccess.setRootDirectory("/var/run/autologout");
+        return dataAccess;
     }
     
     @Provides

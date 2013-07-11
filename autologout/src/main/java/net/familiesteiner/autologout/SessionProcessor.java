@@ -18,14 +18,16 @@ import org.slf4j.LoggerFactory;
 public class SessionProcessor implements SessionProcessorInterface {
     private static Logger LOG = LoggerFactory.getLogger(TimerService.class);
     DBusAdapterInterface dbusAdapter = null;
+    DataAccessInterface dataAccess = null;
 
     public DBusAdapterInterface getDbusAdapter() {
         return dbusAdapter;
     }
     
     @Inject
-    public SessionProcessor(DBusAdapterInterface dbusAdapter) {
+    public SessionProcessor(DBusAdapterInterface dbusAdapter, DataAccessInterface dataAccess) {
         this.dbusAdapter = dbusAdapter;
+        this.dataAccess = dataAccess;
     }
 
     /**
