@@ -1,14 +1,1 @@
-Tools to add
-google guice for dependency injection
-mockito for mock test
-
-copy jar to /usr/local/autologout/autologout.jar
-
-start anwendung:
-sudo jsvc -cp autologout-1.0-SNAPSHOT-jar-with-dependencies.jar -errfile /tmp/err.txt -outfile /tmp/out.txt -pidfile /tmp/pid.txt -java-home /usr/lib/jvm/java-6-openjdk-amd64/ net.familiesteiner.autologout.MainDaemon
-
-stop anwendung:
-sudo jsvc -cp autologout-1.0-SNAPSHOT-jar-with-dependencies.jar -errfile /tmp/err.txt -outfile /tmp/out.txt -pidfile /tmp/pid.txt -java-home /usr/lib/jvm/java-6-openjdk-amd64/ -stop net.familiesteiner.autologout.MainDaemon
-
-generate init links for boot:
-update-rc.d autologout defaults
+Produktives log4j.properties
