@@ -1,1 +1,2 @@
-Produktives log4j.properties
+persistenz
+automatisches ausloggen
