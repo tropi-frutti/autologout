@@ -1,3 +1,9 @@
-<net.familiesteiner.autologout.domain.User>
-  <uid>321</uid>
-</net.familiesteiner.autologout.domain.User>
+<net.familiesteiner.autologout.domain.SessionSummary>
+  <user>
+    <uid>321</uid>
+  </user>
+  <activeTimes>
+    <date>2013-07-15 14:13:35.407 UTC</date>
+    <date>2013-07-15 14:14:35.407 UTC</date>
+  </activeTimes>
+</net.familiesteiner.autologout.domain.SessionSummary>

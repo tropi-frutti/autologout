@@ -23,16 +23,18 @@ DESC="autologout service"
 EXEC="/usr/bin/jsvc"
 
 # The path to the folder containing autologout.jar
-FILE_PATH="/usr/local/$NAME"
+FILE_PATH="/var/run/$NAME"
 
 # The path to the folder containing the java runtime
 JAVA_HOME="/usr/lib/jvm/default-java"
 
 # Our classpath including our jar file and the Apache Commons Daemon library
-CLASS_PATH="$FILE_PATH/autologout.jar"
+CLASS_PATH="/usr/share/jdeb/lib/autologout-1.0-SNAPSHOT-jar-with-dependencies.jar"
 
 # The fully qualified name of the class to execute
 CLASS="net.familiesteiner.autologout.MainDaemon"
+
+JAVA_PROPERTIES="-Dnet.familiesteiner.autologout.rootdirectory=/var/lib/$NAME"
 
 # Any command line arguments to be passed to the our Java Daemon implementations init() method 
 ARGS=""
@@ -44,10 +46,10 @@ USER="root"
 PID="/var/run/$NAME.pid"
 
 # System.out writes to this file...
-LOG_OUT="$FILE_PATH/log/$NAME.out"
+LOG_OUT="$FILE_PATH/$NAME.out"
 
 # System.err writes to this file...
-LOG_ERR="$FILE_PATH/err/$NAME.err"
+LOG_ERR="$FILE_PATH/$NAME.err"
 
 jsvc_exec()
 {   

@@ -5,8 +5,10 @@
 package net.familiesteiner.autologout;
 
 import java.io.File;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import net.familiesteiner.autologout.domain.SessionSummary;
 import net.familiesteiner.autologout.domain.User;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -43,7 +45,9 @@ public class DataAccessTest {
     public void testSave() {
         System.out.println("save");
         User user = new User(123);
-        instance.save(user);
+        SessionSummary sessionSummary = new SessionSummary(user);
+        sessionSummary.addActiveTime(new Date());
+        instance.save(sessionSummary);
     }
 
     /**
@@ -53,9 +57,12 @@ public class DataAccessTest {
     public void testLoadAll() {
         instance.setRootDirectory("src/test/resources/testdata");
         System.out.println("loadAll");
-        Set expResult = new HashSet<User>();
-        expResult.add(new User(321));
-        Set result = instance.loadAll();
+        Set<SessionSummary> expResult = new HashSet<SessionSummary>();
+        SessionSummary sessionSummary = new SessionSummary((new User(321)));
+        expResult.add(sessionSummary);
+        Set result = instance.loadAllSessionSummaries();
         assertEquals(expResult, result);
+        SessionSummary resultSummary = (SessionSummary) result.toArray()[0];
+        assertEquals("number of contained elements is wrong", 2, resultSummary.countActiveMinutes());
     }
 }

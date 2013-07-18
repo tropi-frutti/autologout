@@ -5,7 +5,6 @@
 package net.familiesteiner.autologout.domain;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeSet;
@@ -17,6 +16,19 @@ import java.util.TreeSet;
 public class SessionSummary {
 
     User user;
+    boolean dirty = false;
+
+    public boolean isDirty() {
+        return dirty;
+    }
+
+    public void setDirty(boolean dirty) {
+        this.dirty = dirty;
+    }
+
+    public User getUser() {
+        return user;
+    }
 
     TreeSet<Date> activeTimes;
 
@@ -44,16 +56,13 @@ public class SessionSummary {
     }
 
     public SessionSummary(User user) {
-        activeTimes = new TreeSet<Date>(new Comparator<Date>(){
-            public int compare(Date t, Date t1) {
-                return t.compareTo(t1);
-            }            
-        });
+        activeTimes = new TreeSet<Date>();
         this.user = user;
     }
     
     public void addActiveTime(Date activeTime) {
         this.activeTimes.add(activeTime);
+        this.dirty = true;
     }
     
     public void clearOutdatedActiveTimes(Date validUntil) {

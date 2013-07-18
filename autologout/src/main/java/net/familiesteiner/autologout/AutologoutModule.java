@@ -24,9 +24,10 @@ public class AutologoutModule extends AbstractModule {
     }
     
     @Provides
-    DataAccess provideDataAccess() {
+    DataAccessInterface provideDataAccessInterface() {
         DataAccess dataAccess = new DataAccess();
-        dataAccess.setRootDirectory("/var/run/autologout");
+        String rootDirectory = System.getProperty("net.familiesteiner.autologout.rootdirectory", "/var/lib/autologout");
+        dataAccess.setRootDirectory(rootDirectory);
         return dataAccess;
     }
     

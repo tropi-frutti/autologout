@@ -8,18 +8,15 @@ import com.thoughtworks.xstream.XStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.familiesteiner.autologout.domain.User;
+import net.familiesteiner.autologout.domain.SessionSummary;
+import net.familiesteiner.autologout.domain.UserConfiguration;
 
 /**
  *
@@ -37,18 +34,19 @@ public class DataAccess implements DataAccessInterface {
     }
 
     @Override
-    public void save(User user) {
+    public void save(SessionSummary sessionSummary) {
         BufferedWriter writer = null;
         File file = null;
         FileWriter fileWriter = null;
             XStream xstream = new XStream();
-            String content = xstream.toXML(user);
-            long uid = user.getUid();
+            String content = xstream.toXML(sessionSummary);
+            long uid = sessionSummary.getUser().getUid();
             file = new File(this.rootDirectory, String.valueOf(uid)+".xml");
         try {
             fileWriter = new FileWriter(file, false);
             writer = new BufferedWriter(fileWriter);
             writer.write(content);
+            sessionSummary.setDirty(false);
         } catch (IOException ex) {
             Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -71,9 +69,9 @@ public class DataAccess implements DataAccessInterface {
    }
 
     @Override
-    public Set<User> loadAll() {
+    public Set<SessionSummary> loadAllSessionSummaries() {
         XStream xstream = new XStream();
-        Set<User> result = new HashSet<User>();
+        Set<SessionSummary> result = new HashSet<SessionSummary>();
         File rootDirectoryFile = new File(this.rootDirectory);
         File[] files = rootDirectoryFile.listFiles(new FilenameFilter() {
 
@@ -88,10 +86,14 @@ public class DataAccess implements DataAccessInterface {
             for (int i = 0; i < files.length; i++) {
                 BufferedReader reader = null;
                 File file = files[i];
-                User user = (User)xstream.fromXML(file);
-                result.add(user);
+                SessionSummary sessionSummary = (SessionSummary)xstream.fromXML(file);
+                result.add(sessionSummary);
             }
         }
         return result;
+    }
+
+    public Set<UserConfiguration> loadAllUserConfigurations() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

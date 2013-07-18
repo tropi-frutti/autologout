@@ -29,6 +29,7 @@ public class TimerService {
         timer = new Timer(true);
     }
     public void start() {
+        this.sessionProcessor.loadSessions();
         timer.schedule(new TimerTask() {
 
             @Override
@@ -36,6 +37,8 @@ public class TimerService {
                 LOG.info("run");
                 sessionProcessor.ping();
                 sessionProcessor.traceCurrentActiveSessions();
+                sessionProcessor.saveSessions();
+
             }
         }, 0, 60*1000);
     }
@@ -43,5 +46,6 @@ public class TimerService {
     public void stop() {
         LOG.info("stop");
         timer.cancel();
+        this.sessionProcessor.saveSessions();
     }
 }
