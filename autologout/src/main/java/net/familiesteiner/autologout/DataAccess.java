@@ -41,6 +41,8 @@ public class DataAccess implements DataAccessInterface {
         FileWriter fileWriter = null;
             XStream xstream = new XStream();
             xstream.alias("sessionSummary", SessionSummary.class);
+            xstream.omitField(SessionSummary.class, "lastActive");
+            xstream.omitField(SessionSummary.class, "dirty");
             String content = xstream.toXML(sessionSummary);
             long uid = sessionSummary.getUser().getUid();
             file = new File(this.rootDirectory, String.valueOf(uid)+".xml");

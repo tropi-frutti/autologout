@@ -35,7 +35,6 @@ public class TimerService {
             @Override
             public void run() {
                 LOG.info("run");
-                sessionProcessor.ping();
                 sessionProcessor.countCurrentActiveSessions();
                 sessionProcessor.saveSessions();
 

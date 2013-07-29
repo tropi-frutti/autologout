@@ -4,6 +4,7 @@
  */
 package net.familiesteiner.autologout;
 
+import com.thoughtworks.xstream.XStream;
 import java.io.File;
 import java.util.Date;
 import java.util.HashSet;
@@ -11,6 +12,7 @@ import java.util.Set;
 import net.familiesteiner.autologout.domain.SessionSummary;
 import net.familiesteiner.autologout.domain.User;
 import net.familiesteiner.autologout.domain.UserConfiguration;
+import org.joda.time.LocalTime;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

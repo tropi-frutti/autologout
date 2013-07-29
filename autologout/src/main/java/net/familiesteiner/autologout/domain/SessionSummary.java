@@ -17,6 +17,11 @@ public class SessionSummary {
 
     User user;
     boolean dirty = false;
+    Date lastActive;
+
+    public Date getLastActive() {
+        return lastActive;
+    }
 
     public boolean isDirty() {
         return dirty;
@@ -63,6 +68,7 @@ public class SessionSummary {
     public void addActiveTime(Date activeTime) {
         this.activeTimes.add(activeTime);
         this.dirty = true;
+        this.lastActive = activeTime;
     }
     
     public void clearOutdatedActiveTimes(Date validUntil) {

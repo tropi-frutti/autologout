@@ -5,6 +5,9 @@
 package net.familiesteiner.autologout.domain;
 
 import java.util.Date;
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
+import org.joda.time.LocalTime;
 
 /**
  *
@@ -22,6 +25,50 @@ public class UserConfiguration {
     long onlineLimit;
     long warningDelay;
     Date userWarned;
+    int allowedFromHour;
+    int allowedFromMinute;
+    int allowedUntilHour;
+    int allowedUntilMinute;
+
+    public int getAllowedFromHour() {
+        return allowedFromHour;
+    }
+
+    public void setAllowedFromHour(int allowedFromHour) {
+        this.allowedFromHour = allowedFromHour;
+    }
+
+    public int getAllowedFromMinute() {
+        return allowedFromMinute;
+    }
+
+    public void setAllowedFromMinute(int allowedFromMinute) {
+        this.allowedFromMinute = allowedFromMinute;
+    }
+
+    public int getAllowedUntilHour() {
+        return allowedUntilHour;
+    }
+
+    public void setAllowedUntilHour(int allowedUntilHour) {
+        this.allowedUntilHour = allowedUntilHour;
+    }
+
+    public int getAllowedUntilMinute() {
+        return allowedUntilMinute;
+    }
+
+    public void setAllowedUntilMinute(int allowedUntilMinute) {
+        this.allowedUntilMinute = allowedUntilMinute;
+    }
+
+    public long getWarningDelay() {
+        return warningDelay;
+    }
+
+    public void setWarningDelay(long warningDelay) {
+        this.warningDelay = warningDelay;
+    }
 
     public Date getUserWarned() {
         return userWarned;
@@ -33,6 +80,12 @@ public class UserConfiguration {
 
     public long getOnlineLimit() {
         return onlineLimit;
+    }
+    
+    public Interval getAllowedInterval() {
+        DateTime from = new LocalTime(this.allowedFromHour, this.allowedFromMinute, 0).toDateTimeToday();
+        DateTime until = new LocalTime(this.allowedUntilHour, this.allowedUntilMinute, 0).toDateTimeToday();
+        return new Interval(from, until);
     }
 
     @Override

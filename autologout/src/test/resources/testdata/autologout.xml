@@ -1,16 +1,24 @@
 <list>
-<userConfiguration>
-  <user>
-    <uid>321</uid>
-  </user>
-  <onlineLimit>60</onlineLimit>
-  <warningDelay>5</warningDelay>
-</userConfiguration>
-<userConfiguration>
-  <user>
-    <uid>322</uid>
-  </user>
-  <onlineLimit>30</onlineLimit>
-  <warningDelay>5</warningDelay>
-</userConfiguration>
+    <userConfiguration>
+      <user>
+        <uid>321</uid>
+      </user>
+      <onlineLimit>60</onlineLimit>
+      <warningDelay>5</warningDelay>
+      <allowedFromHour>12</allowedFromHour>
+      <allowedFromMinute>0</allowedFromMinute>
+      <allowedUntilHour>0</allowedUntilHour>
+      <allowedUntilMinute>0</allowedUntilMinute>
+    </userConfiguration>
+    <userConfiguration>
+      <user>
+        <uid>322</uid>
+      </user>
+      <onlineLimit>30</onlineLimit>
+      <warningDelay>5</warningDelay>
+      <allowedFromHour>12</allowedFromHour>
+      <allowedFromMinute>0</allowedFromMinute>
+      <allowedUntilHour>0</allowedUntilHour>
+      <allowedUntilMinute>0</allowedUntilMinute>
+    </userConfiguration>
 </list>

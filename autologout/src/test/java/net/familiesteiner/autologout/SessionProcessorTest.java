@@ -45,21 +45,11 @@ public class SessionProcessorTest {
     }
 
     /**
-     * Test of ping method, of class SessionProcessor.
-     */
-    @Test
-    public void testPing() {
-        System.out.println("ping");
-        SessionProcessor instance = new SessionProcessor(dbusAdapter, dataAccess);
-        instance.ping();
-    }
-
-    /**
      * Test of countCurrentActiveSessions method, of class SessionProcessor.
      */
     @Test
-    public void testTraceCurrentActiveSessions() {
-        System.out.println("traceCurrentActiveSessions");
+    public void testCountCurrentActiveSessions() {
+        System.out.println("countCurrentActiveSessions");
         Set<User> users = new HashSet<User>();
         users.add(new User(123));
         when(dbusAdapter.identifyActiveSessions()).thenReturn(users);

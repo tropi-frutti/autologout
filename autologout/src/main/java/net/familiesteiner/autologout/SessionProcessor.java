@@ -13,6 +13,7 @@ import java.util.Set;
 import net.familiesteiner.autologout.domain.SessionSummary;
 import net.familiesteiner.autologout.domain.User;
 import net.familiesteiner.autologout.domain.UserConfiguration;
+import org.joda.time.Interval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,14 +42,6 @@ public class SessionProcessor implements SessionProcessorInterface {
      *
      */
     @Override
-    public void ping() {
-        LOG.info("ping");
-    }
-
-    /**
-     *
-     */
-    @Override
     public void countCurrentActiveSessions() {
         XStream xstream = new XStream();
         Date now = new Date();
@@ -66,6 +59,14 @@ public class SessionProcessor implements SessionProcessorInterface {
 
             LOG.info("active session xml: " + xstream.toXML(sessionSummary));
             LOG.info("active time: " + sessionSummary.countActiveMinutes());
+            
+            UserConfiguration userConfiguration = this.userConfigurations.get(user);
+            if (null != userConfiguration) {
+                Interval allowedInterval = userConfiguration.getAllowedInterval();
+                if (allowedInterval.containsNow() == false) {
+                    // TODO check if warning or something else must be triggered
+                }
+            }
        }
     }
 
