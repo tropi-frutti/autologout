@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 import net.familiesteiner.autologout.domain.SessionSummary;
 import net.familiesteiner.autologout.domain.User;
+import net.familiesteiner.autologout.domain.UserConfiguration;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -54,7 +55,7 @@ public class DataAccessTest {
      * Test of loadAll method, of class DataAccess.
      */
     @Test
-    public void testLoadAll() {
+    public void loadAllSessionSummaries() {
         instance.setRootDirectory("src/test/resources/testdata");
         System.out.println("loadAll");
         Set<SessionSummary> expResult = new HashSet<SessionSummary>();
@@ -64,5 +65,26 @@ public class DataAccessTest {
         assertEquals(expResult, result);
         SessionSummary resultSummary = (SessionSummary) result.toArray()[0];
         assertEquals("number of contained elements is wrong", 2, resultSummary.countActiveMinutes());
+    }
+
+    /**
+     * Test of loadAll method, of class DataAccess.
+     */
+    @Test
+    public void loadAllUserConfigurations() {
+        instance.setRootDirectory("src/test/resources/testdata");
+        System.out.println("loadAllUserConfigurations");
+        Set<UserConfiguration> result = instance.loadAllUserConfigurations();
+        assertEquals("wrong number of elements", 2, result.size());
+        assertTrue("user config 321 is not contained", result.contains(new UserConfiguration(new User(321))));
+        assertTrue("user config 322 is not contained", result.contains(new UserConfiguration(new User(322))));
+        for (UserConfiguration userConfiguration : result) {
+            if(userConfiguration.getUser().getUid() == 321) {
+                assertEquals("online limit is wrong", 60, userConfiguration.getOnlineLimit());                
+            }
+            else {
+                assertEquals("online limit is wrong", 30, userConfiguration.getOnlineLimit());                                
+            }
+        }
     }
 }

@@ -9,7 +9,6 @@ import com.thoughtworks.xstream.XStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import net.familiesteiner.autologout.domain.SessionSummary;
 import net.familiesteiner.autologout.domain.User;
@@ -46,8 +45,11 @@ public class SessionProcessor implements SessionProcessorInterface {
         LOG.info("ping");
     }
 
+    /**
+     *
+     */
     @Override
-    public void traceCurrentActiveSessions() {
+    public void countCurrentActiveSessions() {
         XStream xstream = new XStream();
         Date now = new Date();
 
@@ -91,6 +93,21 @@ public class SessionProcessor implements SessionProcessorInterface {
                 this.dataAccess.save(sessionSummary);
             }
         }
+    }
+
+    @Override
+    public void reenableClosedSessions() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void warnExceededSessions() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void closeExceededSessions() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

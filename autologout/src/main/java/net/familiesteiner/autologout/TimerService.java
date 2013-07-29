@@ -36,7 +36,7 @@ public class TimerService {
             public void run() {
                 LOG.info("run");
                 sessionProcessor.ping();
-                sessionProcessor.traceCurrentActiveSessions();
+                sessionProcessor.countCurrentActiveSessions();
                 sessionProcessor.saveSessions();
 
             }

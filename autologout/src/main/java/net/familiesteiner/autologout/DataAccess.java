@@ -12,6 +12,7 @@ import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,6 +40,7 @@ public class DataAccess implements DataAccessInterface {
         File file = null;
         FileWriter fileWriter = null;
             XStream xstream = new XStream();
+            xstream.alias("sessionSummary", SessionSummary.class);
             String content = xstream.toXML(sessionSummary);
             long uid = sessionSummary.getUser().getUid();
             file = new File(this.rootDirectory, String.valueOf(uid)+".xml");
@@ -71,12 +73,13 @@ public class DataAccess implements DataAccessInterface {
     @Override
     public Set<SessionSummary> loadAllSessionSummaries() {
         XStream xstream = new XStream();
+        xstream.alias("sessionSummary", SessionSummary.class);
         Set<SessionSummary> result = new HashSet<SessionSummary>();
         File rootDirectoryFile = new File(this.rootDirectory);
         File[] files = rootDirectoryFile.listFiles(new FilenameFilter() {
 
             public boolean accept(File file, String string) {
-                if (string.endsWith(".xml"))
+                if (string.endsWith("_sessionSummary.xml"))
                     return true;
                 else
                     return false;
@@ -94,6 +97,16 @@ public class DataAccess implements DataAccessInterface {
     }
 
     public Set<UserConfiguration> loadAllUserConfigurations() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        XStream xstream = new XStream();
+        xstream.alias("userConfiguration", UserConfiguration.class);
+        Set<UserConfiguration> result = new HashSet<UserConfiguration>();
+        File configFile = new File(this.rootDirectory, "autologout.xml");
+        List xstreamResult = (List) xstream.fromXML(configFile);
+        for (Object object : xstreamResult) {
+            UserConfiguration userConfiguration = (UserConfiguration) object;
+            result.add(userConfiguration);
+        }
+        
+        return result;
     }
 }

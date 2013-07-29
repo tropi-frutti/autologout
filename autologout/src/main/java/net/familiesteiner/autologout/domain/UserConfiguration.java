@@ -4,6 +4,8 @@
  */
 package net.familiesteiner.autologout.domain;
 
+import java.util.Date;
+
 /**
  *
  * @author bertel
@@ -11,10 +13,28 @@ package net.familiesteiner.autologout.domain;
 public class UserConfiguration {
     User user;
 
+    public UserConfiguration(User user) {
+        this.user = user;
+    }
     public User getUser() {
         return user;
     }
     long onlineLimit;
+    long warningDelay;
+    Date userWarned;
+
+    public Date getUserWarned() {
+        return userWarned;
+    }
+
+    public void setUserWarned(Date userWarned) {
+        this.userWarned = userWarned;
+    }
+
+    public long getOnlineLimit() {
+        return onlineLimit;
+    }
+
     @Override
     public int hashCode() {
         return this.user.hashCode();
@@ -28,7 +48,7 @@ public class UserConfiguration {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final SessionSummary other = (SessionSummary) obj;
+        final UserConfiguration other = (UserConfiguration) obj;
         if (this.user.hashCode() != other.user.hashCode()) {
             return false;
         }

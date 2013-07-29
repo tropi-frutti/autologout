@@ -1,0 +1,16 @@
+<list>
+<userConfiguration>
+  <user>
+    <uid>321</uid>
+  </user>
+  <onlineLimit>60</onlineLimit>
+  <warningDelay>5</warningDelay>
+</userConfiguration>
+<userConfiguration>
+  <user>
+    <uid>322</uid>
+  </user>
+  <onlineLimit>30</onlineLimit>
+  <warningDelay>5</warningDelay>
+</userConfiguration>
+</list>

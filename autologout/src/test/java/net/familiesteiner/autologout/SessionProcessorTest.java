@@ -55,7 +55,7 @@ public class SessionProcessorTest {
     }
 
     /**
-     * Test of traceCurrentActiveSessions method, of class SessionProcessor.
+     * Test of countCurrentActiveSessions method, of class SessionProcessor.
      */
     @Test
     public void testTraceCurrentActiveSessions() {
@@ -64,6 +64,6 @@ public class SessionProcessorTest {
         users.add(new User(123));
         when(dbusAdapter.identifyActiveSessions()).thenReturn(users);
         SessionProcessor instance = new SessionProcessor(dbusAdapter, dataAccess);
-        instance.traceCurrentActiveSessions();
+        instance.countCurrentActiveSessions();
     }
 }
