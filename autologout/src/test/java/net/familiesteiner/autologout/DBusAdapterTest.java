@@ -185,12 +185,12 @@ public class DBusAdapterTest {
         assertNotNull("the address must not be null", address);
     }
     
-    @Test
+//    @Test
     public void testRequestLogout() throws DBusException {
         instance.requestLogout(new User(1000));
     }
     
-    @Test
+//    @Test
     public void testForceLogout() throws DBusException {
         instance.forceLogout(new User(1000));
     }

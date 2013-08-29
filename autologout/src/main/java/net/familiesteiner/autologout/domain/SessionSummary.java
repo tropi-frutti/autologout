@@ -18,6 +18,8 @@ public class SessionSummary {
     User user;
     boolean dirty = false;
     Date lastActive;
+    Date warnTime;
+    Date closeTime;
 
     public Date getLastActive() {
         return lastActive;
