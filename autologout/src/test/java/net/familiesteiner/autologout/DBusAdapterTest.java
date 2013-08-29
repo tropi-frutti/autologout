@@ -13,6 +13,7 @@ import org.freedesktop.ConsoleKit.Seat;
 import org.freedesktop.ConsoleKit.Session;
 import org.freedesktop.dbus.DBusInterface;
 import org.freedesktop.dbus.UInt32;
+import org.freedesktop.dbus.exceptions.DBusException;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -177,4 +178,21 @@ public class DBusAdapterTest {
         assertEquals(expResult.size(),result.size());
         assertEquals(expResult, result);
     }
-}
+    
+    @Test
+    public void testGetSessionAddress() {
+        String address = instance.getSessionAddress(new User(1000));
+        assertNotNull("the address must not be null", address);
+    }
+    
+    @Test
+    public void testRequestLogout() throws DBusException {
+        instance.requestLogout(new User(1000));
+    }
+    
+    @Test
+    public void testForceLogout() throws DBusException {
+        instance.forceLogout(new User(1000));
+    }
+
+ }
