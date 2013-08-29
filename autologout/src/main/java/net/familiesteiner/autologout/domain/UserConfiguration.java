@@ -24,7 +24,6 @@ public class UserConfiguration {
     }
     long onlineLimit;
     long warningDelay;
-    Date userWarned;
     int allowedFromHour;
     int allowedFromMinute;
     int allowedUntilHour;
@@ -68,14 +67,6 @@ public class UserConfiguration {
 
     public void setWarningDelay(long warningDelay) {
         this.warningDelay = warningDelay;
-    }
-
-    public Date getUserWarned() {
-        return userWarned;
-    }
-
-    public void setUserWarned(Date userWarned) {
-        this.userWarned = userWarned;
     }
 
     public long getOnlineLimit() {

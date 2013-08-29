@@ -6,15 +6,12 @@ package net.familiesteiner.autologout;
 
 import com.google.inject.Inject;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.attribute.PosixFileAttributeView;
-import java.nio.file.attribute.PosixFileAttributes;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -113,6 +110,10 @@ public class DBusAdapter implements DBusAdapterInterface, DBusSigHandler<Seat.Se
             Logger.getLogger(DBusAdapter.class.getName()).log(Level.SEVERE, null, ex);
         }
         return address;
+    }
+
+    public void warnUser(User user) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

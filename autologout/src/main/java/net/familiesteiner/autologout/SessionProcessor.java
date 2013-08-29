@@ -59,14 +59,6 @@ public class SessionProcessor implements SessionProcessorInterface {
 
             LOG.info("active session xml: " + xstream.toXML(sessionSummary));
             LOG.info("active time: " + sessionSummary.countActiveMinutes());
-            
-            UserConfiguration userConfiguration = this.userConfigurations.get(user);
-            if (null != userConfiguration) {
-                Interval allowedInterval = userConfiguration.getAllowedInterval();
-                if (allowedInterval.containsNow() == false) {
-                    // TODO check if warning or something else must be triggered
-                }
-            }
        }
     }
 
@@ -103,7 +95,17 @@ public class SessionProcessor implements SessionProcessorInterface {
 
     @Override
     public void warnExceededSessions() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        for (Map.Entry<User, SessionSummary> entry : sessionSummaries.entrySet()) {
+            User user = entry.getKey();
+            SessionSummary sessionSummary = entry.getValue();
+            UserConfiguration userConfiguration = this.userConfigurations.get(user);
+            if (null != userConfiguration) {
+                Interval allowedInterval = userConfiguration.getAllowedInterval();
+                if (allowedInterval.containsNow() == false) {
+                    // TODO check if warning or something else must be triggered
+                }
+            }
+        }
     }
 
     @Override

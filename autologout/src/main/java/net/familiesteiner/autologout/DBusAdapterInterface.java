@@ -14,4 +14,5 @@ import net.familiesteiner.autologout.domain.User;
 public interface DBusAdapterInterface {
         public Set<User> identifyActiveSessions();
         public String getSessionAddress(User user);
+        public void warnUser(User user);
 }
