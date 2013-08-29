@@ -29,6 +29,7 @@ import org.freedesktop.dbus.DBusInterface;
 import org.freedesktop.dbus.DBusSigHandler;
 import org.freedesktop.dbus.UInt32;
 import org.freedesktop.dbus.exceptions.DBusException;
+import org.gnome.SessionManager;
 
 /**
  *
@@ -83,16 +84,17 @@ public class DBusAdapter implements DBusAdapterInterface, DBusSigHandler<Seat.Se
         Path dir = Paths.get("/proc");
         try {
             DirectoryStream<Path> stream = Files.newDirectoryStream(dir);
+            directorySearch:
             for (Path path : stream) {
                Path exepath = path.resolve("exe");
                if (Files.exists(exepath)) {
-                    int uid = (Integer)Files.getAttribute(exepath, "unix:uid");                   
+                    int uid = (Integer)Files.getAttribute(path, "unix:uid");                   
                     if (uid == user.getUid()) {
                         Path target = Files.readSymbolicLink(exepath);
                         if (target.endsWith("gnome-session")) {
                            Path environpath = path.resolve("environ");
                             // load file environ
-                           BufferedReader envReader = Files.newBufferedReader(environpath, Charset.forName("US_ASCII"));
+                           BufferedReader envReader = Files.newBufferedReader(environpath, Charset.defaultCharset());
                            String line = null;
                            while((line = envReader.readLine()) != null) {
                                // search for DBUS_SESSION_BUS_ADDRESS
@@ -102,6 +104,7 @@ public class DBusAdapter implements DBusAdapterInterface, DBusSigHandler<Seat.Se
                                    final String DBUS_SESSION_BUS_ADDRESSNAME="DBUS_SESSION_BUS_ADDRESS=";
                                    if(env.startsWith(DBUS_SESSION_BUS_ADDRESSNAME)) {
                                        address = env.substring(DBUS_SESSION_BUS_ADDRESSNAME.length());
+                                       break directorySearch;
                                    }
                                }
                            }
@@ -115,4 +118,17 @@ public class DBusAdapter implements DBusAdapterInterface, DBusSigHandler<Seat.Se
         return address;
     }
 
+    public void requestLogout(User user) throws DBusException {
+        String sessionAddress = getSessionAddress(user);
+        DBusConnection bus = DBusConnection.getConnection(sessionAddress);
+        SessionManager sessionManager = (SessionManager) bus.getRemoteObject("org.gnome.SessionManager", "/org/gnome/SessionManager");
+        sessionManager.Logout(new UInt32(0)); // logout with cancel option
+    }
+
+    public void forceLogout(User user) throws DBusException {
+        String sessionAddress = getSessionAddress(user);
+        DBusConnection bus = DBusConnection.getConnection(sessionAddress);
+        SessionManager sessionManager = (SessionManager) bus.getRemoteObject("org.gnome.SessionManager", "/org/gnome/SessionManager");
+        sessionManager.Logout(new UInt32(2)); // logout immediately
+    }
 }
