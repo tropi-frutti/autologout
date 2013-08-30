@@ -10,9 +10,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import net.familiesteiner.autologout.domain.SessionSummary;
 import net.familiesteiner.autologout.domain.User;
 import net.familiesteiner.autologout.domain.UserConfiguration;
+import org.freedesktop.dbus.exceptions.DBusException;
 import org.joda.time.Interval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,23 +96,44 @@ public class SessionProcessor implements SessionProcessorInterface {
     }
 
     @Override
-    public void warnExceededSessions() {
+    public void handleExceededSessions() {
         for (Map.Entry<User, SessionSummary> entry : sessionSummaries.entrySet()) {
             User user = entry.getKey();
             SessionSummary sessionSummary = entry.getValue();
             UserConfiguration userConfiguration = this.userConfigurations.get(user);
+            boolean logoutActionIdentified = false;
             if (null != userConfiguration) {
+                
+                // 1. check if allowed now
                 Interval allowedInterval = userConfiguration.getAllowedInterval();
                 if (allowedInterval.containsNow() == false) {
-                    // TODO check if warning or something else must be triggered
+                    logoutActionIdentified = true;
+                }
+                
+                // 2. check if time sum has exceeded
+                long onlineLimit = userConfiguration.getOnlineLimit();
+                long activeMinutes = sessionSummary.countActiveMinutes();
+                if (activeMinutes > onlineLimit) {
+                    logoutActionIdentified = true;
+                }
+            }
+            
+            if (true == logoutActionIdentified) {
+                try {
+                    // check if warn or logout
+                    if (sessionSummary.isAlreadyWarnedToday()) {
+                        if (sessionSummary.isWarningDelayTimedOut(userConfiguration.getWarningDelay())) {
+                            this.dbusAdapter.forceLogout(user);                            
+                        }
+                    }
+                    else {
+                        sessionSummary.setWarnTime(new Date());
+                        this.dbusAdapter.requestLogout(user);
+                    }
+                } catch (DBusException ex) {
+                    java.util.logging.Logger.getLogger(SessionProcessor.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
     }
-
-    @Override
-    public void closeExceededSessions() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
 }

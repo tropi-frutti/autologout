@@ -179,7 +179,7 @@ public class DBusAdapterTest {
         assertEquals(expResult, result);
     }
     
-    @Test
+//    @Test
     public void testGetSessionAddress() {
         String address = instance.getSessionAddress(new User(1000));
         assertNotNull("the address must not be null", address);

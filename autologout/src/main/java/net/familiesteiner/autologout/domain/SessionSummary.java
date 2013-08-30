@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeSet;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 
 /**
  *
@@ -19,6 +21,14 @@ public class SessionSummary {
     boolean dirty = false;
     Date lastActive;
     Date warnTime;
+
+    public Date getWarnTime() {
+        return warnTime;
+    }
+
+    public void setWarnTime(Date warnTime) {
+        this.warnTime = warnTime;
+    }
     Date closeTime;
 
     public Date getLastActive() {
@@ -85,5 +95,30 @@ public class SessionSummary {
     
     public long countActiveMinutes() {
         return this.activeTimes.size();
+    }
+    
+    public boolean isAlreadyWarnedToday() {
+        boolean result = false;
+        if (this.warnTime != null) {
+            LocalDate now = new LocalDate();
+            LocalDate warnDate = new LocalDate(this.warnTime);
+            if (now.isEqual(warnDate)) {
+                result = true;
+            }
+        }
+        return result;
+    }
+    
+    public boolean isWarningDelayTimedOut(long delayInMinutes) {
+        boolean result = false;        
+        if (this.warnTime != null) {
+            LocalDateTime delayTimedOut = new LocalDateTime();
+            delayTimedOut.minusMinutes((int) delayInMinutes);
+            LocalDateTime warnDateTime = new LocalDateTime(this.warnTime);
+            if (delayTimedOut.isAfter(warnDateTime)) {
+                result = true;
+            }
+        }
+        return result;
     }
 }

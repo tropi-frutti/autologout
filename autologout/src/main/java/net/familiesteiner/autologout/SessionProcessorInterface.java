@@ -13,6 +13,5 @@ public interface SessionProcessorInterface {
     public void loadSessions();
     public void saveSessions();
     public void reenableClosedSessions();
-    public void warnExceededSessions();
-    public void closeExceededSessions();
+    public void handleExceededSessions();
 }

@@ -4,7 +4,6 @@
  */
 package net.familiesteiner.autologout.domain;
 
-import java.util.Date;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.LocalTime;

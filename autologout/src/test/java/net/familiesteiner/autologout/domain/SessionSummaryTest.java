@@ -84,4 +84,19 @@ public class SessionSummaryTest {
         result = instance.countActiveMinutes();
         assertEquals("wrong number of active minutes", 2L, result);
    }
+   
+   @Test
+   public void testIsAlreadyWarnedToday() {
+        SessionSummary instance = new SessionSummary(new User(123));
+        
+        assertFalse("warning must not be happened", instance.isAlreadyWarnedToday());
+        
+        Date warnTimeInPast = new Date(0);
+        instance.setWarnTime(warnTimeInPast);       
+        assertFalse("warning must not be happened", instance.isAlreadyWarnedToday());
+        
+        Date warnTimeNow = new Date();
+        instance.setWarnTime(warnTimeNow);       
+        assertTrue("warning must be happened", instance.isAlreadyWarnedToday());
+   }
 }
