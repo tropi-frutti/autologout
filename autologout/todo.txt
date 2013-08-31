@@ -1,1 +1,3 @@
 Hausarbeitenmodus ein und ausschalten
+besseres tracing
+Deal with case if configuration autologout.xml does not exist

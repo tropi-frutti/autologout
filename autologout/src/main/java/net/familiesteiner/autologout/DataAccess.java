@@ -103,6 +103,7 @@ public class DataAccess implements DataAccessInterface {
         xstream.alias("userConfiguration", UserConfiguration.class);
         Set<UserConfiguration> result = new HashSet<UserConfiguration>();
         File configFile = new File(this.rootDirectory, "autologout.xml");
+        // TODO check if file does not exist. If not deal with that
         List xstreamResult = (List) xstream.fromXML(configFile);
         for (Object object : xstreamResult) {
             UserConfiguration userConfiguration = (UserConfiguration) object;
