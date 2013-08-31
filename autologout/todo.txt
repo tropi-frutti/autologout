@@ -1,2 +1,1 @@
-persistenz
-automatisches ausloggen
+Hausarbeitenmodus ein und ausschalten
