@@ -1,3 +1,5 @@
 Hausarbeitenmodus ein und ausschalten
+- per rest service Zusatzguthaben für aktuelle woche hinzu fügen
+- Handy App zum steuern
 besseres tracing
 Deal with case if configuration autologout.xml does not exist
