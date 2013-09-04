@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.TreeSet;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
+import org.slf4j.ext.XLogger;
+import org.slf4j.ext.XLoggerFactory;
 
 /**
  *
@@ -17,6 +19,7 @@ import org.joda.time.LocalDateTime;
  */
 public class SessionSummary {
 
+    private static XLogger LOG = XLoggerFactory.getXLogger(SessionSummary.class);
     User user;
     boolean dirty = false;
     Date lastActive;
@@ -78,19 +81,24 @@ public class SessionSummary {
     }
     
     public void addActiveTime(Date activeTime) {
+        LOG.entry(activeTime);
         this.activeTimes.add(activeTime);
         this.dirty = true;
         this.lastActive = activeTime;
+        LOG.exit();
     }
     
     public void clearOutdatedActiveTimes(Date validUntil) {
+        LOG.entry(validUntil);
         List<Date> datesToRemove = new ArrayList<Date>();  
         for (Date date : activeTimes) {
             if (date.before(validUntil)) {
+                LOG.debug("remove " + date);
                 datesToRemove.add(date);
             }
         }
         this.activeTimes.removeAll(datesToRemove);
+        LOG.exit();        
     }
     
     public long countActiveMinutes() {

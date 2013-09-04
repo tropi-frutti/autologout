@@ -27,6 +27,8 @@ import org.freedesktop.dbus.DBusSigHandler;
 import org.freedesktop.dbus.UInt32;
 import org.freedesktop.dbus.exceptions.DBusException;
 import org.gnome.SessionManager;
+import org.slf4j.ext.XLogger;
+import org.slf4j.ext.XLoggerFactory;
 
 /**
  *
@@ -35,14 +37,17 @@ import org.gnome.SessionManager;
 public class DBusAdapter implements DBusAdapterInterface, DBusSigHandler<Seat.SessionAdded> {
     DBusConnection bus;
     Manager consoleKitManager;
+    private static XLogger LOG = XLoggerFactory.getXLogger(SessionProcessor.class);
 
     public Manager getConsoleKitManager() {
         return consoleKitManager;
     }
     
     public void init() throws DBusException {
+        LOG.entry();
         DBusConnection bus = DBusConnection.getConnection(DBusConnection.SYSTEM);
     	Manager ck_proxy = (Manager) bus.getRemoteObject("org.freedesktop.ConsoleKit", "/org/freedesktop/ConsoleKit/Manager");
+        LOG.exit();
     }
     
     @Inject
@@ -56,6 +61,7 @@ public class DBusAdapter implements DBusAdapterInterface, DBusSigHandler<Seat.Se
     
     @Override
     public Set<User> identifyActiveSessions() {
+        LOG.entry();
         Set<User> result = new HashSet<User>();
         List<DBusInterface> list = consoleKitManager.GetSeats();
     	for (DBusInterface object : list) {
@@ -69,6 +75,7 @@ public class DBusAdapter implements DBusAdapterInterface, DBusSigHandler<Seat.Se
                 }
             }
         }      
+        LOG.exit();
         return result;
     }
 
@@ -77,6 +84,7 @@ public class DBusAdapter implements DBusAdapterInterface, DBusSigHandler<Seat.Se
     }
 
     public String getSessionAddress(User user) {
+        LOG.entry(user.getUid());
         String address = null;
         Path dir = Paths.get("/proc");
         try {
@@ -110,22 +118,27 @@ public class DBusAdapter implements DBusAdapterInterface, DBusSigHandler<Seat.Se
                }
             }
         } catch (IOException ex) {
-            Logger.getLogger(DBusAdapter.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.catching(ex);
         }
+        LOG.exit(address);
         return address;
     }
 
     public void requestLogout(User user) throws DBusException {
+        LOG.entry(user.getUid());
         String sessionAddress = getSessionAddress(user);
         DBusConnection bus = DBusConnection.getConnection(sessionAddress);
         SessionManager sessionManager = (SessionManager) bus.getRemoteObject("org.gnome.SessionManager", "/org/gnome/SessionManager");
         sessionManager.Logout(new UInt32(0)); // logout with cancel option
+        LOG.exit();
     }
 
     public void forceLogout(User user) throws DBusException {
+        LOG.entry(user.getUid());
         String sessionAddress = getSessionAddress(user);
         DBusConnection bus = DBusConnection.getConnection(sessionAddress);
         SessionManager sessionManager = (SessionManager) bus.getRemoteObject("org.gnome.SessionManager", "/org/gnome/SessionManager");
         sessionManager.Logout(new UInt32(2)); // logout immediately
+        LOG.exit();
     }
 }

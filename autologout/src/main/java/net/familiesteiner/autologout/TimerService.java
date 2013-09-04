@@ -9,6 +9,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.ext.XLogger;
+import org.slf4j.ext.XLoggerFactory;
 
 /**
  *
@@ -21,7 +23,7 @@ public class TimerService {
         return sessionProcessor;
     }
     Timer timer = null;
-    private static Logger LOG = LoggerFactory.getLogger(TimerService.class);
+    private static XLogger LOG = XLoggerFactory.getXLogger(TimerService.class);
     
     @Inject
     public TimerService(SessionProcessorInterface sessionProcessor) {
@@ -29,22 +31,25 @@ public class TimerService {
         timer = new Timer(true);
     }
     public void start() {
+        LOG.entry();
         this.sessionProcessor.loadSessions();
         timer.schedule(new TimerTask() {
 
             @Override
             public void run() {
-                LOG.info("run");
+                LOG.entry();
                 sessionProcessor.countCurrentActiveSessions();
                 sessionProcessor.saveSessions();
-
+                LOG.exit();
             }
         }, 0, 60*1000);
+        LOG.exit();
     }
     
     public void stop() {
-        LOG.info("stop");
+        LOG.entry();
         timer.cancel();
         this.sessionProcessor.saveSessions();
+        LOG.exit();
     }
 }

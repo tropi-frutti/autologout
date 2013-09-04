@@ -6,8 +6,8 @@ import org.apache.commons.daemon.Daemon;
 import org.apache.commons.daemon.DaemonContext;
 import org.apache.commons.daemon.DaemonInitException;
 import org.freedesktop.dbus.exceptions.DBusException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.ext.XLogger;
+import org.slf4j.ext.XLoggerFactory;
 
 /**
  * Hello world!
@@ -15,12 +15,12 @@ import org.slf4j.LoggerFactory;
  */
 public class MainDaemon implements Daemon
 {
+    private static XLogger LOG = XLoggerFactory.getXLogger(MainDaemon.class);
     TimerService timerService;
     
     public static void main( String[] args ) throws DBusException
     {
-        Logger logger = LoggerFactory.getLogger(MainDaemon.class);
-        logger.info( "Hello World!" );
+        LOG.entry((Object[]) args);
         MainDaemon daemon = new MainDaemon();
         try {
             daemon.init(null);
@@ -28,35 +28,43 @@ public class MainDaemon implements Daemon
             Thread.sleep(10000);
             daemon.stop();
         } catch (InterruptedException ex) {
-            logger.error(null, ex);
+            LOG.catching(ex);
         } catch (DaemonInitException ex) {
-            logger.error(null, ex);
+            LOG.catching(ex);
         } catch (Exception ex) {
-            logger.error(null, ex);
+            LOG.catching(ex);
         }
         finally {
             daemon.destroy();            
         }
-        logger.info("Goodbye");
+        LOG.exit();
     }
     
     public void init(DaemonContext context) throws DaemonInitException, Exception {
+        LOG.entry();
         Injector injector = Guice.createInjector(new AutologoutModule());
         timerService = injector.getInstance(TimerService.class);
+        LOG.exit();
     }
 
     public void start() throws Exception {
+        LOG.entry();
         timerService.start();
+        LOG.exit();
     }
 
     public void stop() throws Exception {
+        LOG.entry();
         timerService.stop();
+        LOG.exit();
     }
 
     public void destroy() {
+        LOG.entry();
         if (null != timerService) {
             timerService.stop();
         }
         timerService = null;
+        LOG.exit();
     }
 }

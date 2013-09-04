@@ -16,15 +16,15 @@ import net.familiesteiner.autologout.domain.User;
 import net.familiesteiner.autologout.domain.UserConfiguration;
 import org.freedesktop.dbus.exceptions.DBusException;
 import org.joda.time.Interval;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.ext.XLogger;
+import org.slf4j.ext.XLoggerFactory;
 
 /**
  *
  * @author bertel
  */
 public class SessionProcessor implements SessionProcessorInterface {
-    private static Logger LOG = LoggerFactory.getLogger(TimerService.class);
+    private static XLogger LOG = XLoggerFactory.getXLogger(SessionProcessor.class);
     DBusAdapterInterface dbusAdapter = null;
     DataAccessInterface dataAccess = null;
     Map<User,SessionSummary> sessionSummaries = new HashMap<User,SessionSummary>();
@@ -45,13 +45,13 @@ public class SessionProcessor implements SessionProcessorInterface {
      */
     @Override
     public void countCurrentActiveSessions() {
+        LOG.entry();
         XStream xstream = new XStream();
         Date now = new Date();
 
         Set<User> users = this.dbusAdapter.identifyActiveSessions();
         for (User user : users) {
             LOG.info("active User: " + user.getUid());
-            LOG.info("active User xml: " + xstream.toXML(user));
             SessionSummary sessionSummary = this.sessionSummaries.get(user);
             if (sessionSummary == null) {
                 sessionSummary = new SessionSummary(user);
@@ -59,13 +59,14 @@ public class SessionProcessor implements SessionProcessorInterface {
             }
             sessionSummary.addActiveTime(now);
 
-            LOG.info("active session xml: " + xstream.toXML(sessionSummary));
             LOG.info("active time: " + sessionSummary.countActiveMinutes());
        }
+        LOG.exit();
     }
 
     @Override
     public void loadSessions() {
+        LOG.entry();
         this.sessionSummaries.clear();
         Set<SessionSummary> storedSessionSummaries = this.dataAccess.loadAllSessionSummaries();
         for (SessionSummary sessionSummary : storedSessionSummaries) {
@@ -78,16 +79,19 @@ public class SessionProcessor implements SessionProcessorInterface {
         for (UserConfiguration userConfiguration : loadedUserConfigurations) {
             this.userConfigurations.put(userConfiguration.getUser(), userConfiguration);
         }
+        LOG.exit();
     }
 
     @Override
     public void saveSessions() {
+        LOG.entry();
         for (Map.Entry<User, SessionSummary> entry : sessionSummaries.entrySet()) {
             SessionSummary sessionSummary = entry.getValue();
             if (sessionSummary.isDirty()) {
                 this.dataAccess.save(sessionSummary);
             }
         }
+        LOG.exit();
     }
 
     @Override
@@ -97,6 +101,7 @@ public class SessionProcessor implements SessionProcessorInterface {
 
     @Override
     public void handleExceededSessions() {
+        LOG.entry();
         for (Map.Entry<User, SessionSummary> entry : sessionSummaries.entrySet()) {
             User user = entry.getKey();
             SessionSummary sessionSummary = entry.getValue();
@@ -116,24 +121,32 @@ public class SessionProcessor implements SessionProcessorInterface {
                 if (activeMinutes > onlineLimit) {
                     logoutActionIdentified = true;
                 }
-            }
-            
-            if (true == logoutActionIdentified) {
-                try {
-                    // check if warn or logout
-                    if (sessionSummary.isAlreadyWarnedToday()) {
-                        if (sessionSummary.isWarningDelayTimedOut(userConfiguration.getWarningDelay())) {
-                            this.dbusAdapter.forceLogout(user);                            
+                
+                if (true == logoutActionIdentified) {
+                    try {
+                        // check if warn or logout
+                        if (sessionSummary.isAlreadyWarnedToday()) {
+                            long warningDelay = userConfiguration.getWarningDelay();
+                            if (!sessionSummary.isWarningDelayTimedOut(warningDelay)) {
+                                // wait until force time occurs
+                            } else {                            
+                                this.dbusAdapter.forceLogout(user);
+                            }
                         }
+                        else {
+                            sessionSummary.setWarnTime(new Date());
+                            this.dbusAdapter.requestLogout(user);
+                        }
+                    } catch (DBusException ex) {
+                        LOG.catching(ex);
                     }
-                    else {
-                        sessionSummary.setWarnTime(new Date());
-                        this.dbusAdapter.requestLogout(user);
-                    }
-                } catch (DBusException ex) {
-                    java.util.logging.Logger.getLogger(SessionProcessor.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+            else {
+                // session summary without user configuration
+                LOG.debug("no user configuration for user with session summary: " + user.getUid());
+            }
         }
+        LOG.exit();
     }
 }

@@ -14,10 +14,10 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.familiesteiner.autologout.domain.SessionSummary;
 import net.familiesteiner.autologout.domain.UserConfiguration;
+import org.slf4j.ext.XLogger;
+import org.slf4j.ext.XLoggerFactory;
 
 /**
  *
@@ -25,6 +25,7 @@ import net.familiesteiner.autologout.domain.UserConfiguration;
  */
 public class DataAccess implements DataAccessInterface {
     String rootDirectory = null;
+    private static XLogger LOG = XLoggerFactory.getXLogger(SessionProcessor.class);
 
     public String getRootDirectory() {
         return rootDirectory;
@@ -36,6 +37,7 @@ public class DataAccess implements DataAccessInterface {
 
     @Override
     public void save(SessionSummary sessionSummary) {
+        LOG.entry(sessionSummary.getUser().getUid());
         BufferedWriter writer = null;
         File file = null;
         FileWriter fileWriter = null;
@@ -52,7 +54,7 @@ public class DataAccess implements DataAccessInterface {
             writer.write(content);
             sessionSummary.setDirty(false);
         } catch (IOException ex) {
-            Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.catching(ex);
         }
         finally {
             try {
@@ -60,20 +62,22 @@ public class DataAccess implements DataAccessInterface {
                 writer.close();
                 }
             } catch (IOException ex) {
-                Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
+                LOG.catching(ex);
             }
             try {
                 if (null != fileWriter) {
                 fileWriter.close();
                 }
             } catch (IOException ex) {
-                Logger.getLogger(DataAccess.class.getName()).log(Level.SEVERE, null, ex);
+                LOG.catching(ex);
             }
         }
+        LOG.exit();
    }
 
     @Override
     public Set<SessionSummary> loadAllSessionSummaries() {
+        LOG.entry();
         XStream xstream = new XStream();
         xstream.alias("sessionSummary", SessionSummary.class);
         Set<SessionSummary> result = new HashSet<SessionSummary>();
@@ -88,28 +92,35 @@ public class DataAccess implements DataAccessInterface {
             }
         });
         if (null != files) {
+            LOG.info("found " + files.length + " session summaries");
             for (int i = 0; i < files.length; i++) {
                 BufferedReader reader = null;
                 File file = files[i];
+                LOG.debug("loading: " + file.getAbsolutePath());
                 SessionSummary sessionSummary = (SessionSummary)xstream.fromXML(file);
                 result.add(sessionSummary);
             }
         }
+        LOG.exit();
         return result;
     }
 
     public Set<UserConfiguration> loadAllUserConfigurations() {
+        LOG.entry();
         XStream xstream = new XStream();
         xstream.alias("userConfiguration", UserConfiguration.class);
         Set<UserConfiguration> result = new HashSet<UserConfiguration>();
         File configFile = new File(this.rootDirectory, "autologout.xml");
+        LOG.debug("loading config from " + configFile.getAbsolutePath());
         // TODO check if file does not exist. If not deal with that
         List xstreamResult = (List) xstream.fromXML(configFile);
         for (Object object : xstreamResult) {
             UserConfiguration userConfiguration = (UserConfiguration) object;
+            LOG.debug("found config for user: " + userConfiguration.getUser().getUid());
             result.add(userConfiguration);
         }
         
+        LOG.exit();
         return result;
     }
 }

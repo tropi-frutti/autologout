@@ -46,7 +46,6 @@ public class DataAccessTest {
      */
     @Test
     public void testSave() {
-        System.out.println("save");
         User user = new User(123);
         SessionSummary sessionSummary = new SessionSummary(user);
         sessionSummary.addActiveTime(new Date());
@@ -59,7 +58,6 @@ public class DataAccessTest {
     @Test
     public void loadAllSessionSummaries() {
         instance.setRootDirectory("src/test/resources/testdata");
-        System.out.println("loadAll");
         Set<SessionSummary> expResult = new HashSet<SessionSummary>();
         SessionSummary sessionSummary = new SessionSummary((new User(321)));
         expResult.add(sessionSummary);
@@ -75,7 +73,6 @@ public class DataAccessTest {
     @Test
     public void loadAllUserConfigurations() {
         instance.setRootDirectory("src/test/resources/testdata");
-        System.out.println("loadAllUserConfigurations");
         Set<UserConfiguration> result = instance.loadAllUserConfigurations();
         assertEquals("wrong number of elements", 2, result.size());
         assertTrue("user config 321 is not contained", result.contains(new UserConfiguration(new User(321))));

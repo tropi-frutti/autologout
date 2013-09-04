@@ -49,7 +49,6 @@ public class SessionProcessorTest {
      */
     @Test
     public void testCountCurrentActiveSessions() {
-        System.out.println("countCurrentActiveSessions");
         Set<User> users = new HashSet<User>();
         users.add(new User(123));
         when(dbusAdapter.identifyActiveSessions()).thenReturn(users);

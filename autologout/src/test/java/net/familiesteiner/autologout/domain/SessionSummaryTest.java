@@ -24,7 +24,6 @@ public class SessionSummaryTest {
      */
     @Test
     public void testHashCode_equals() {
-        System.out.println("hashCode");
         SessionSummary instance1 = new SessionSummary(new User(123));
         SessionSummary instance2 = new SessionSummary(new User(123));
         SessionSummary instance3 = new SessionSummary(new User(321));
@@ -40,7 +39,6 @@ public class SessionSummaryTest {
      */
     @Test
     public void testAddActiveTimeSameTime() {
-        System.out.println("addActiveTime");
         Date activeTime = new Date();
         SessionSummary instance = new SessionSummary(new User(123));
         instance.addActiveTime(activeTime);
@@ -55,7 +53,6 @@ public class SessionSummaryTest {
     
     @Test
     public void testClearOutdatedActiveTimes() {
-        System.out.println("clearOutdatedActiveTimes");
         Date validUntil = new Date(50000);
         SessionSummary instance = new SessionSummary(new User(123));
         instance.addActiveTime(new Date(51000));
