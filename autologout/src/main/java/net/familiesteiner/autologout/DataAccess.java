@@ -47,7 +47,7 @@ public class DataAccess implements DataAccessInterface {
             xstream.omitField(SessionSummary.class, "dirty");
             String content = xstream.toXML(sessionSummary);
             long uid = sessionSummary.getUser().getUid();
-            file = new File(this.rootDirectory, String.valueOf(uid)+".xml");
+            file = new File(this.rootDirectory, String.valueOf(uid)+"_sessionSummary.xml");
         try {
             fileWriter = new FileWriter(file, false);
             writer = new BufferedWriter(fileWriter);
