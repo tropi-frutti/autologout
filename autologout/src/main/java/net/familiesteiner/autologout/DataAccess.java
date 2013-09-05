@@ -111,13 +111,17 @@ public class DataAccess implements DataAccessInterface {
         xstream.alias("userConfiguration", UserConfiguration.class);
         Set<UserConfiguration> result = new HashSet<UserConfiguration>();
         File configFile = new File(this.rootDirectory, "autologout.xml");
-        LOG.debug("loading config from " + configFile.getAbsolutePath());
-        // TODO check if file does not exist. If not deal with that
-        List xstreamResult = (List) xstream.fromXML(configFile);
-        for (Object object : xstreamResult) {
-            UserConfiguration userConfiguration = (UserConfiguration) object;
-            LOG.debug("found config for user: " + userConfiguration.getUser().getUid());
-            result.add(userConfiguration);
+        if (configFile.exists()) {
+            LOG.debug("loading config from " + configFile.getAbsolutePath());
+            List xstreamResult = (List) xstream.fromXML(configFile);
+            for (Object object : xstreamResult) {
+                UserConfiguration userConfiguration = (UserConfiguration) object;
+                LOG.debug("found config for user: " + userConfiguration.getUser().getUid());
+                result.add(userConfiguration);
+            }
+        }
+        else {
+            LOG.warn("config does not exist: " + configFile.getAbsolutePath());            
         }
         
         LOG.exit();
