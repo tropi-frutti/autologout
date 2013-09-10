@@ -139,12 +139,15 @@ public class SessionProcessor implements SessionProcessorInterface {
                         if (sessionSummary.isAlreadyWarnedToday()) {
                             long warningDelay = userConfiguration.getWarningDelay();
                             if (!sessionSummary.isWarningDelayTimedOut(warningDelay)) {
+                                LOG.debug("user already warned but still in warning period: " + user);                    
                                 // wait until force time occurs
                             } else {                            
+                                LOG.info("forcing user to log out: " + user);                    
                                 this.dbusAdapter.forceLogout(user);
                             }
                         }
                         else {
+                            LOG.info("warning user to log out: " + user);                    
                             sessionSummary.markAsWarned();
                             this.dbusAdapter.requestLogout(user);
                         }
@@ -152,10 +155,13 @@ public class SessionProcessor implements SessionProcessorInterface {
                         LOG.catching(ex);
                     }
                 }
+                else {
+                    LOG.debug("no action required for user: " + user);                    
+                }
             }
             else {
                 // session summary without user configuration
-                LOG.debug("no user configuration for user with session summary: " + user.getUid());
+                LOG.debug("no user configuration for user with session summary: " + user);
             }
         }
         LOG.exit();
