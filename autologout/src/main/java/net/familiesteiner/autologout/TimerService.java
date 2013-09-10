@@ -36,9 +36,16 @@ public class TimerService {
             @Override
             public void run() {
                 LOG.entry();
-                sessionProcessor.calculateActiveTimes();
-                sessionProcessor.handleExceededSessions();
-                sessionProcessor.saveSessions();
+                try {
+                    sessionProcessor.calculateActiveTimes();
+                    sessionProcessor.handleExceededSessions();
+                    sessionProcessor.saveSessions();
+                }
+                catch (RuntimeException ex) {
+                    timer.cancel();
+                    LOG.catching(ex);
+                    throw ex;
+                }
                 LOG.exit();
             }
         }, 0, 60*1000); // trigger once a minute
