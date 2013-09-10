@@ -5,6 +5,8 @@
 package net.familiesteiner.autologout.domain;
 
 import java.util.Date;
+import net.familiesteiner.autologout.DateFactory;
+import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -18,6 +20,12 @@ import org.junit.Ignore;
  * @author bertel
  */
 public class SessionSummaryTest {
+    
+    @BeforeClass
+    public static void setUpClass() {
+        DateFactory.getInstance().setTestMode(true);
+        DateFactory.getInstance().setNow(new DateTime(2013, 1, 1, 15, 30));
+    }
     
     /**
      * Test of hashCode method, of class SessionSummary.
@@ -39,7 +47,7 @@ public class SessionSummaryTest {
      */
     @Test
     public void testAddActiveTimeSameTime() {
-        Date activeTime = new Date();
+        DateTime activeTime = new DateTime();
         SessionSummary instance = new SessionSummary(new User(123));
         instance.addActiveTime(activeTime);
         instance.addActiveTime(activeTime);
@@ -53,11 +61,11 @@ public class SessionSummaryTest {
     
     @Test
     public void testClearOutdatedActiveTimes() {
-        Date validUntil = new Date(50000);
+        DateTime validUntil = new DateTime(2013, 1, 1, 15, 0);
         SessionSummary instance = new SessionSummary(new User(123));
-        instance.addActiveTime(new Date(51000));
-        instance.addActiveTime(new Date(49000));
-        instance.addActiveTime(new Date(52000));
+        instance.addActiveTime(new DateTime(2013, 1, 1, 15, 20));
+        instance.addActiveTime(new DateTime(2013, 1, 1, 14, 30));
+        instance.addActiveTime(new DateTime(2013, 1, 1, 15, 25));
         instance.clearOutdatedActiveTimes(validUntil);
         
         assertEquals("the leftover time is wrong", 2, instance.countActiveMinutes());
@@ -74,10 +82,10 @@ public class SessionSummaryTest {
         long result = instance.countActiveMinutes();
         assertEquals("wrong number of active minutes", 0L, result);
         
-        instance.addActiveTime(new Date(0));
+        instance.addActiveTime(new DateTime(2013, 1, 1, 15, 20));
         result = instance.countActiveMinutes();
         assertEquals("wrong number of active minutes", 1L, result);
-        instance.addActiveTime(new Date(12345));
+        instance.addActiveTime(new DateTime(2013, 1, 1, 15, 30));
         result = instance.countActiveMinutes();
         assertEquals("wrong number of active minutes", 2L, result);
    }
@@ -88,12 +96,12 @@ public class SessionSummaryTest {
         
         assertFalse("warning must not be happened", instance.isAlreadyWarnedToday());
         
-        Date warnTimeInPast = new Date(0);
-        instance.setWarnTime(warnTimeInPast);       
+        DateTime warnTimeYesterday = new DateTime(2012, 12, 31, 15, 30);
+        instance.setWarnTime(warnTimeYesterday.toDate());       
         assertFalse("warning must not be happened", instance.isAlreadyWarnedToday());
         
-        Date warnTimeNow = new Date();
-        instance.setWarnTime(warnTimeNow);       
+        DateTime warnTimeToday = new DateTime(2013, 1, 1, 10, 0);
+        instance.setWarnTime(warnTimeToday.toDate());       
         assertTrue("warning must be happened", instance.isAlreadyWarnedToday());
    }
 }

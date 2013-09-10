@@ -4,6 +4,7 @@
  */
 package net.familiesteiner.autologout.domain;
 
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.LocalTime;
@@ -72,6 +73,10 @@ public class UserConfiguration {
         return onlineLimit;
     }
     
+    public void setOnlineLimit(long onlineLimit) {
+        this.onlineLimit = onlineLimit;
+    }
+    
     public Interval getAllowedInterval() {
         DateTime from = new LocalTime(this.allowedFromHour, this.allowedFromMinute, 0).toDateTimeToday();
         DateTime until = new LocalTime(this.allowedUntilHour, this.allowedUntilMinute, 0).toDateTimeToday();
@@ -99,5 +104,10 @@ public class UserConfiguration {
             return false;
         }
         return true;
+    }
+    
+    @Override
+    public String toString() {
+         return ReflectionToStringBuilder.toString(this);
     }
 }

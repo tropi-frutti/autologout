@@ -7,8 +7,6 @@ package net.familiesteiner.autologout;
 import com.google.inject.Inject;
 import java.util.Timer;
 import java.util.TimerTask;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.ext.XLogger;
 import org.slf4j.ext.XLoggerFactory;
 
@@ -38,11 +36,12 @@ public class TimerService {
             @Override
             public void run() {
                 LOG.entry();
-                sessionProcessor.countCurrentActiveSessions();
+                sessionProcessor.calculateActiveTimes();
+                sessionProcessor.handleExceededSessions();
                 sessionProcessor.saveSessions();
                 LOG.exit();
             }
-        }, 0, 60*1000);
+        }, 0, 60*1000); // trigger once a minute
         LOG.exit();
     }
     

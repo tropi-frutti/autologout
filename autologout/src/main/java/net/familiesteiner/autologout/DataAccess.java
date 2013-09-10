@@ -37,7 +37,7 @@ public class DataAccess implements DataAccessInterface {
 
     @Override
     public void save(SessionSummary sessionSummary) {
-        LOG.entry(sessionSummary.getUser().getUid());
+        LOG.entry(sessionSummary);
         BufferedWriter writer = null;
         File file = null;
         FileWriter fileWriter = null;
@@ -98,6 +98,7 @@ public class DataAccess implements DataAccessInterface {
                 File file = files[i];
                 LOG.debug("loading: " + file.getAbsolutePath());
                 SessionSummary sessionSummary = (SessionSummary)xstream.fromXML(file);
+                LOG.debug("found session summary: " + sessionSummary);
                 result.add(sessionSummary);
             }
         }
@@ -116,7 +117,7 @@ public class DataAccess implements DataAccessInterface {
             List xstreamResult = (List) xstream.fromXML(configFile);
             for (Object object : xstreamResult) {
                 UserConfiguration userConfiguration = (UserConfiguration) object;
-                LOG.debug("found config for user: " + userConfiguration.getUser().getUid());
+                LOG.debug("found user config: " + userConfiguration);
                 result.add(userConfiguration);
             }
         }

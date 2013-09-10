@@ -20,6 +20,7 @@ public class AutologoutTestModule extends AbstractModule {
     protected void configure() {
         bind(SessionProcessorInterface.class).to(SessionProcessor.class);
         bind(DBusAdapterInterface.class).to(DBusAdapter.class);
+        DateFactory.getInstance().setTestMode(true);
     }
     
     @Provides

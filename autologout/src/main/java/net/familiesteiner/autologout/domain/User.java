@@ -4,6 +4,7 @@
  */
 package net.familiesteiner.autologout.domain;
 
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.freedesktop.dbus.UInt32;
 
 /**
@@ -43,8 +44,14 @@ public class User {
    public User(UInt32 userId) {
         this(userId.longValue());
     }
+   
     public User(long userId) {
         uid = userId;
+    }
+    
+    @Override
+    public String toString() {
+         return ReflectionToStringBuilder.toString(this);
     }
 }   
  

@@ -6,7 +6,6 @@ package net.familiesteiner.autologout;
 
 import java.util.Set;
 import net.familiesteiner.autologout.domain.SessionSummary;
-import net.familiesteiner.autologout.domain.User;
 import net.familiesteiner.autologout.domain.UserConfiguration;
 
 /**

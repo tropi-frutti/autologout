@@ -5,16 +5,14 @@
 package net.familiesteiner.autologout;
 
 import com.google.inject.Inject;
-import com.thoughtworks.xstream.XStream;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 import net.familiesteiner.autologout.domain.SessionSummary;
 import net.familiesteiner.autologout.domain.User;
 import net.familiesteiner.autologout.domain.UserConfiguration;
 import org.freedesktop.dbus.exceptions.DBusException;
+import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.slf4j.ext.XLogger;
 import org.slf4j.ext.XLoggerFactory;
@@ -28,6 +26,16 @@ public class SessionProcessor implements SessionProcessorInterface {
     DBusAdapterInterface dbusAdapter = null;
     DataAccessInterface dataAccess = null;
     Map<User,SessionSummary> sessionSummaries = new HashMap<User,SessionSummary>();
+
+    /** helper to inject data for testing */
+    void setSessionSummaries(Map<User, SessionSummary> sessionSummaries) {
+        this.sessionSummaries = sessionSummaries;
+    }
+
+    /** helper to inject data for testing */
+    public void setUserConfigurations(Map<User, UserConfiguration> userConfigurations) {
+        this.userConfigurations = userConfigurations;
+    }
     Map<User, UserConfiguration> userConfigurations = new HashMap<User,UserConfiguration>();
 
     public DBusAdapterInterface getDbusAdapter() {
@@ -44,10 +52,10 @@ public class SessionProcessor implements SessionProcessorInterface {
      *
      */
     @Override
-    public void countCurrentActiveSessions() {
+    public void calculateActiveTimes() {
         LOG.entry();
-        XStream xstream = new XStream();
-        Date now = new Date();
+        DateTime now = DateFactory.getInstance().now();
+        
 
         Set<User> users = this.dbusAdapter.identifyActiveSessions();
         for (User user : users) {
@@ -58,6 +66,9 @@ public class SessionProcessor implements SessionProcessorInterface {
                 this.sessionSummaries.put(user, sessionSummary);
             }
             sessionSummary.addActiveTime(now);
+            
+            // delete online times from last week
+            sessionSummary.clearOutdatedActiveTimes(DateFactory.getInstance().getStartOfWeek());
 
             LOG.info("active time: " + sessionSummary.countActiveMinutes());
        }
@@ -134,7 +145,7 @@ public class SessionProcessor implements SessionProcessorInterface {
                             }
                         }
                         else {
-                            sessionSummary.setWarnTime(new Date());
+                            sessionSummary.markAsWarned();
                             this.dbusAdapter.requestLogout(user);
                         }
                     } catch (DBusException ex) {

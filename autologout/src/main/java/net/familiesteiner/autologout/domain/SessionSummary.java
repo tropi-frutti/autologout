@@ -4,10 +4,14 @@
  */
 package net.familiesteiner.autologout.domain;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeSet;
+import net.familiesteiner.autologout.DateFactory;
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.slf4j.ext.XLogger;
@@ -24,6 +28,9 @@ public class SessionSummary {
     boolean dirty = false;
     Date lastActive;
     Date warnTime;
+    TreeSet<Date> activeTimes;
+    Date closeTime;
+
 
     public Date getWarnTime() {
         return warnTime;
@@ -32,8 +39,10 @@ public class SessionSummary {
     public void setWarnTime(Date warnTime) {
         this.warnTime = warnTime;
     }
-    Date closeTime;
 
+    public void markAsWarned() {
+        this.warnTime = DateFactory.getInstance().now().toDate();
+    }
     public Date getLastActive() {
         return lastActive;
     }
@@ -49,8 +58,6 @@ public class SessionSummary {
     public User getUser() {
         return user;
     }
-
-    TreeSet<Date> activeTimes;
 
     @Override
     public int hashCode() {
@@ -80,19 +87,19 @@ public class SessionSummary {
         this.user = user;
     }
     
-    public void addActiveTime(Date activeTime) {
+    public void addActiveTime(DateTime activeTime) {
         LOG.entry(activeTime);
-        this.activeTimes.add(activeTime);
+        this.activeTimes.add(activeTime.toDate());
         this.dirty = true;
-        this.lastActive = activeTime;
+        this.lastActive = activeTime.toDate();
         LOG.exit();
     }
-    
-    public void clearOutdatedActiveTimes(Date validUntil) {
+
+    public void clearOutdatedActiveTimes(DateTime validUntil) {
         LOG.entry(validUntil);
         List<Date> datesToRemove = new ArrayList<Date>();  
         for (Date date : activeTimes) {
-            if (date.before(validUntil)) {
+            if (new DateTime(date).isBefore(validUntil)) {
                 LOG.debug("remove " + date);
                 datesToRemove.add(date);
             }
@@ -108,9 +115,9 @@ public class SessionSummary {
     public boolean isAlreadyWarnedToday() {
         boolean result = false;
         if (this.warnTime != null) {
-            LocalDate now = new LocalDate();
+            LocalDate nowDate = new LocalDate(DateFactory.getInstance().now());
             LocalDate warnDate = new LocalDate(this.warnTime);
-            if (now.isEqual(warnDate)) {
+            if (nowDate.isEqual(warnDate)) {
                 result = true;
             }
         }
@@ -120,13 +127,26 @@ public class SessionSummary {
     public boolean isWarningDelayTimedOut(long delayInMinutes) {
         boolean result = false;        
         if (this.warnTime != null) {
-            LocalDateTime delayTimedOut = new LocalDateTime();
+            DateTime delayTimedOut = DateFactory.getInstance().now();
             delayTimedOut.minusMinutes((int) delayInMinutes);
-            LocalDateTime warnDateTime = new LocalDateTime(this.warnTime);
+            DateTime warnDateTime = new DateTime(this.warnTime);
             if (delayTimedOut.isAfter(warnDateTime)) {
                 result = true;
             }
         }
         return result;
+    }
+    
+    public String toString() {
+        return (new ReflectionToStringBuilder(this) {
+            protected Object getValue(Field f) throws IllegalArgumentException, IllegalAccessException {
+                if (f.getName().equals("activeTimes")) {
+                    return activeTimes==null?null:activeTimes.size();
+                }
+                else {
+                    return super.getValue(f);
+                }
+            }
+        }).toString();
     }
 }

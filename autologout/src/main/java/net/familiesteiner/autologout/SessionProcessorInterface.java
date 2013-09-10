@@ -9,7 +9,7 @@ package net.familiesteiner.autologout;
  * @author bertel
  */
 public interface SessionProcessorInterface {
-    public void countCurrentActiveSessions();
+    public void calculateActiveTimes();
     public void loadSessions();
     public void saveSessions();
     public void reenableClosedSessions();

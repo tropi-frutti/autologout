@@ -15,8 +15,6 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.familiesteiner.autologout.domain.User;
 import org.freedesktop.ConsoleKit.Manager;
 import org.freedesktop.ConsoleKit.Seat;
@@ -75,7 +73,7 @@ public class DBusAdapter implements DBusAdapterInterface, DBusSigHandler<Seat.Se
                 }
             }
         }      
-        LOG.exit();
+        LOG.exit(result);
         return result;
     }
 
@@ -84,7 +82,7 @@ public class DBusAdapter implements DBusAdapterInterface, DBusSigHandler<Seat.Se
     }
 
     public String getSessionAddress(User user) {
-        LOG.entry(user.getUid());
+        LOG.entry(user);
         String address = null;
         Path dir = Paths.get("/proc");
         try {
@@ -125,7 +123,7 @@ public class DBusAdapter implements DBusAdapterInterface, DBusSigHandler<Seat.Se
     }
 
     public void requestLogout(User user) throws DBusException {
-        LOG.entry(user.getUid());
+        LOG.entry(user);
         String sessionAddress = getSessionAddress(user);
         DBusConnection bus = DBusConnection.getConnection(sessionAddress);
         SessionManager sessionManager = (SessionManager) bus.getRemoteObject("org.gnome.SessionManager", "/org/gnome/SessionManager");
@@ -134,7 +132,7 @@ public class DBusAdapter implements DBusAdapterInterface, DBusSigHandler<Seat.Se
     }
 
     public void forceLogout(User user) throws DBusException {
-        LOG.entry(user.getUid());
+        LOG.entry(user);
         String sessionAddress = getSessionAddress(user);
         DBusConnection bus = DBusConnection.getConnection(sessionAddress);
         SessionManager sessionManager = (SessionManager) bus.getRemoteObject("org.gnome.SessionManager", "/org/gnome/SessionManager");

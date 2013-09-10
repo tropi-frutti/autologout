@@ -12,6 +12,7 @@ import java.util.Set;
 import net.familiesteiner.autologout.domain.SessionSummary;
 import net.familiesteiner.autologout.domain.User;
 import net.familiesteiner.autologout.domain.UserConfiguration;
+import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -48,7 +49,7 @@ public class DataAccessTest {
     public void testSave() {
         User user = new User(123);
         SessionSummary sessionSummary = new SessionSummary(user);
-        sessionSummary.addActiveTime(new Date());
+        sessionSummary.addActiveTime(new DateTime());
         instance.save(sessionSummary);
     }
 
