@@ -35,7 +35,7 @@ import org.slf4j.ext.XLoggerFactory;
 public class DBusAdapter implements DBusAdapterInterface, DBusSigHandler<Seat.SessionAdded> {
     DBusConnection bus;
     Manager consoleKitManager;
-    private static XLogger LOG = XLoggerFactory.getXLogger(SessionProcessor.class);
+    private static XLogger LOG = XLoggerFactory.getXLogger(DBusAdapter.class);
 
     public Manager getConsoleKitManager() {
         return consoleKitManager;
@@ -81,6 +81,7 @@ public class DBusAdapter implements DBusAdapterInterface, DBusSigHandler<Seat.Se
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
     public String getSessionAddress(User user) {
         LOG.entry(user);
         String address = null;
@@ -95,6 +96,7 @@ public class DBusAdapter implements DBusAdapterInterface, DBusSigHandler<Seat.Se
                     if (uid == user.getUid()) {
                         Path target = Files.readSymbolicLink(exepath);
                         if (target.endsWith("gnome-session")) {
+                           LOG.debug("found gnome session: " + exepath);
                            Path environpath = path.resolve("environ");
                             // load file environ
                            BufferedReader envReader = Files.newBufferedReader(environpath, Charset.defaultCharset());
@@ -118,6 +120,10 @@ public class DBusAdapter implements DBusAdapterInterface, DBusSigHandler<Seat.Se
         } catch (IOException ex) {
             LOG.catching(ex);
         }
+        if (address == null) {
+            throw new RuntimeException("no session address found for user " + user);
+        }
+        
         LOG.exit(address);
         return address;
     }

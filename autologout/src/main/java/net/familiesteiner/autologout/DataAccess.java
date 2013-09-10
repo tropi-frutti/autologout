@@ -25,7 +25,7 @@ import org.slf4j.ext.XLoggerFactory;
  */
 public class DataAccess implements DataAccessInterface {
     String rootDirectory = null;
-    private static XLogger LOG = XLoggerFactory.getXLogger(SessionProcessor.class);
+    private static XLogger LOG = XLoggerFactory.getXLogger(DataAccess.class);
 
     public String getRootDirectory() {
         return rootDirectory;
