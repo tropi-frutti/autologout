@@ -23,18 +23,18 @@ public class DateFactory {
     }
 
     public DateTime now() {
-        return now;
+        return getNow();
     }
 
     private DateTime getNow() {
-        DateTime now;
+        DateTime nowResult;
         if (testMode) {
-            now = this.now.toDateTime();
+            nowResult = this.now.toDateTime();
         }
         else {
-            now = new DateTime();            
+            nowResult = new DateTime();            
         }
-        return now;
+        return nowResult;
     }
 
     public void setNow(DateTime now) {
