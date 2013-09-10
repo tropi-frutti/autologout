@@ -44,6 +44,7 @@ public class MainDaemon implements Daemon
         LOG.entry();
         Injector injector = Guice.createInjector(new AutologoutModule());
         timerService = injector.getInstance(TimerService.class);
+        timerService.setDaemonController(context.getController());
         LOG.exit();
     }
 

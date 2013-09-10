@@ -7,6 +7,7 @@ package net.familiesteiner.autologout;
 import com.google.inject.Inject;
 import java.util.Timer;
 import java.util.TimerTask;
+import org.apache.commons.daemon.DaemonController;
 import org.slf4j.ext.XLogger;
 import org.slf4j.ext.XLoggerFactory;
 
@@ -16,6 +17,15 @@ import org.slf4j.ext.XLoggerFactory;
  */
 public class TimerService {
     SessionProcessorInterface sessionProcessor = null;
+    DaemonController daemonController = null;
+
+    public DaemonController getDaemonController() {
+        return daemonController;
+    }
+
+    public void setDaemonController(DaemonController daemonController) {
+        this.daemonController = daemonController;
+    }
 
     public SessionProcessorInterface getSessionProcessor() {
         return sessionProcessor;
@@ -44,7 +54,7 @@ public class TimerService {
                 catch (RuntimeException ex) {
                     timer.cancel();
                     LOG.catching(ex);
-                    throw ex;
+                    daemonController.fail(ex);
                 }
                 LOG.exit();
             }
