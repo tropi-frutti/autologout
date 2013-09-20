@@ -36,6 +36,8 @@ CLASS="net.familiesteiner.autologout.MainDaemon"
 
 JAVA_PROPERTIES="-Dnet.familiesteiner.autologout.rootdirectory=/var/lib/$NAME"
 
+JAVA_XOPTS="-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8081,suspend=n"
+
 # Any command line arguments to be passed to the our Java Daemon implementations init() method 
 ARGS=""
 
@@ -54,7 +56,7 @@ LOG_ERR="$FILE_PATH/$NAME.err"
 jsvc_exec()
 {   
     cd $FILE_PATH
-    $EXEC -home $JAVA_HOME -cp $CLASS_PATH -user $USER -outfile $LOG_OUT -errfile $LOG_ERR -pidfile $PID $1 $CLASS $ARGS
+    $EXEC -home $JAVA_HOME -cp $CLASS_PATH -user $USER -outfile $LOG_OUT -errfile $LOG_ERR -pidfile $PID $1 $JAVA_XOPTS $CLASS $ARGS
 }
 
 case "$1" in
