@@ -52,9 +52,10 @@ public class TimerService {
                     sessionProcessor.saveSessions();
                 }
                 catch (RuntimeException ex) {
-                    timer.cancel();
+                    // consume exception and continue
                     LOG.catching(ex);
-                    daemonController.fail(ex);
+//                    timer.cancel();
+//                    daemonController.fail(ex);
                 }
                 LOG.exit();
             }
