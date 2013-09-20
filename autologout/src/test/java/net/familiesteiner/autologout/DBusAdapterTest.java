@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 import net.familiesteiner.autologout.domain.User;
+import net.familiesteiner.autologout.exception.LogoutImpossibleException;
 import org.freedesktop.ConsoleKit.Manager;
 import org.freedesktop.ConsoleKit.Seat;
 import org.freedesktop.ConsoleKit.Session;
@@ -179,19 +180,19 @@ public class DBusAdapterTest {
         assertEquals(expResult, result);
     }
     
-//    @Test
+    @Test
     public void testGetSessionAddress() {
         String address = instance.getSessionAddress(new User(1000));
         assertNotNull("the address must not be null", address);
     }
     
 //    @Test
-    public void testRequestLogout() throws DBusException {
+    public void testRequestLogout() throws LogoutImpossibleException {
         instance.requestLogout(new User(1000));
     }
     
 //    @Test
-    public void testForceLogout() throws DBusException {
+    public void testForceLogout() throws LogoutImpossibleException {
         instance.forceLogout(new User(1000));
     }
 

@@ -3,3 +3,5 @@ Hausarbeitenmodus ein und ausschalten
 - Handy App zum steuern
 besseres tracing
 Deal with case if configuration autologout.xml does not exist
+
+System.setSecurityManager bei checkRead keine Exception werfen.

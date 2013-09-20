@@ -15,7 +15,10 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.familiesteiner.autologout.domain.User;
+import net.familiesteiner.autologout.exception.LogoutImpossibleException;
 import org.freedesktop.ConsoleKit.Manager;
 import org.freedesktop.ConsoleKit.Seat;
 import org.freedesktop.ConsoleKit.Session;
@@ -81,7 +84,6 @@ public class DBusAdapter implements DBusAdapterInterface, DBusSigHandler<Seat.Se
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
     public String getSessionAddress(User user) {
         LOG.entry(user);
         String address = null;
@@ -128,21 +130,33 @@ public class DBusAdapter implements DBusAdapterInterface, DBusSigHandler<Seat.Se
         return address;
     }
 
-    public void requestLogout(User user) throws DBusException {
+    public void requestLogout(User user) throws LogoutImpossibleException {
         LOG.entry(user);
         String sessionAddress = getSessionAddress(user);
-        DBusConnection bus = DBusConnection.getConnection(sessionAddress);
-        SessionManager sessionManager = (SessionManager) bus.getRemoteObject("org.gnome.SessionManager", "/org/gnome/SessionManager");
-        sessionManager.Logout(new UInt32(0)); // logout with cancel option
+        DBusConnection bus;
+        try {
+            bus = DBusConnection.getConnection(sessionAddress);
+            SessionManager sessionManager = (SessionManager) bus.getRemoteObject("org.gnome.SessionManager", "/org/gnome/SessionManager");
+            sessionManager.Logout(new UInt32(0)); // logout with cancel option
+        } catch (DBusException ex) {
+            LOG.catching(ex);
+            throw new LogoutImpossibleException();
+        }
         LOG.exit();
     }
 
-    public void forceLogout(User user) throws DBusException {
+    public void forceLogout(User user) throws LogoutImpossibleException {
         LOG.entry(user);
         String sessionAddress = getSessionAddress(user);
-        DBusConnection bus = DBusConnection.getConnection(sessionAddress);
-        SessionManager sessionManager = (SessionManager) bus.getRemoteObject("org.gnome.SessionManager", "/org/gnome/SessionManager");
-        sessionManager.Logout(new UInt32(2)); // logout immediately
+        DBusConnection bus;
+        try {
+            bus = DBusConnection.getConnection(sessionAddress);
+            SessionManager sessionManager = (SessionManager) bus.getRemoteObject("org.gnome.SessionManager", "/org/gnome/SessionManager");
+            sessionManager.Logout(new UInt32(2)); // logout immediately
+        } catch (DBusException ex) {
+            LOG.catching(ex);
+            throw new LogoutImpossibleException();
+        }
         LOG.exit();
     }
 }

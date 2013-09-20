@@ -6,7 +6,7 @@ package net.familiesteiner.autologout;
 
 import java.util.Set;
 import net.familiesteiner.autologout.domain.User;
-import org.freedesktop.dbus.exceptions.DBusException;
+import net.familiesteiner.autologout.exception.LogoutImpossibleException;
 
 /**
  *
@@ -14,7 +14,6 @@ import org.freedesktop.dbus.exceptions.DBusException;
  */
 public interface DBusAdapterInterface {
         public Set<User> identifyActiveSessions();
-        public String getSessionAddress(User user);
-        public void requestLogout(User user) throws DBusException;
-        public void forceLogout(User user) throws DBusException;
+        public void requestLogout(User user) throws LogoutImpossibleException;
+        public void forceLogout(User user) throws LogoutImpossibleException;
 }

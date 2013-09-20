@@ -11,6 +11,7 @@ import java.util.Set;
 import net.familiesteiner.autologout.domain.SessionSummary;
 import net.familiesteiner.autologout.domain.User;
 import net.familiesteiner.autologout.domain.UserConfiguration;
+import net.familiesteiner.autologout.exception.LogoutImpossibleException;
 import org.freedesktop.dbus.exceptions.DBusException;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
@@ -151,7 +152,7 @@ public class SessionProcessor implements SessionProcessorInterface {
                             sessionSummary.markAsWarned();
                             this.dbusAdapter.requestLogout(user);
                         }
-                    } catch (DBusException ex) {
+                    } catch (LogoutImpossibleException ex) {
                         LOG.catching(ex);
                     }
                 }

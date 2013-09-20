@@ -10,6 +10,7 @@ import java.util.Set;
 import net.familiesteiner.autologout.domain.SessionSummary;
 import net.familiesteiner.autologout.domain.User;
 import net.familiesteiner.autologout.domain.UserConfiguration;
+import net.familiesteiner.autologout.exception.LogoutImpossibleException;
 import org.freedesktop.dbus.exceptions.DBusException;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
@@ -59,7 +60,7 @@ public class SessionProcessorTest {
     }
 
     @Test
-    public void testHandleExceededSessions_nonExpiredUser() throws DBusException {
+    public void testHandleExceededSessions_nonExpiredUser() throws DBusException, LogoutImpossibleException {
         SessionProcessor instance = new SessionProcessor(dbusAdapter, dataAccess);
         User user = new User(123);
         UserConfiguration userConfiguration = new UserConfiguration(user);
@@ -89,7 +90,7 @@ public class SessionProcessorTest {
     }
     
     @Test
-    public void testHandleExceededSessions_expiredUser() throws DBusException {
+    public void testHandleExceededSessions_expiredUser() throws DBusException, LogoutImpossibleException {
         SessionProcessor instance = new SessionProcessor(dbusAdapter, dataAccess);
         User user = new User(123);
         UserConfiguration userConfiguration = new UserConfiguration(user);
