@@ -77,5 +77,6 @@ uid = int(args.uid[0])
 
 
 print args.force
+print get_session_address(uid)
 
 print terminate(uid, args.force)
