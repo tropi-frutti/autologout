@@ -7,6 +7,8 @@ package net.familiesteiner.autologout;
 import com.google.inject.Inject;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -132,31 +134,47 @@ public class DBusAdapter implements DBusAdapterInterface, DBusSigHandler<Seat.Se
 
     public void requestLogout(User user) throws LogoutImpossibleException {
         LOG.entry(user);
-        String sessionAddress = getSessionAddress(user);
-        DBusConnection bus;
-        try {
-            bus = DBusConnection.getConnection(sessionAddress);
-            SessionManager sessionManager = (SessionManager) bus.getRemoteObject("org.gnome.SessionManager", "/org/gnome/SessionManager");
-            sessionManager.Logout(new UInt32(0)); // logout with cancel option
-        } catch (DBusException ex) {
-            LOG.catching(ex);
-            throw new LogoutImpossibleException();
-        }
+        logoutWithScript(user, false);
         LOG.exit();
     }
 
     public void forceLogout(User user) throws LogoutImpossibleException {
         LOG.entry(user);
-        String sessionAddress = getSessionAddress(user);
-        DBusConnection bus;
+        logoutWithScript(user, true);
+        LOG.exit();
+    }
+    
+    private void logoutWithScript(User user, boolean force) {
+        LOG.entry();
+        StringBuilder command = new StringBuilder("/usr/share/autologout/request_logout.py");
+        if (force) {
+            command.append(" --force");
+        }
+        
+        command.append(" ");
+        command.append(user.getUid());
+        
         try {
-            bus = DBusConnection.getConnection(sessionAddress);
-            SessionManager sessionManager = (SessionManager) bus.getRemoteObject("org.gnome.SessionManager", "/org/gnome/SessionManager");
-            sessionManager.Logout(new UInt32(2)); // logout immediately
-        } catch (DBusException ex) {
+            String line;
+            Process process = Runtime.getRuntime().exec(command.toString());
+            BufferedReader bri = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader bre = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            while((line = bri.readLine()) != null ) {
+                System.out.println(line);
+            }
+            bri.close();
+            while((line = bre.readLine()) != null ) {
+                System.err.println(line);
+            }
+            bre.close();
+            
+            int returnCode = process.waitFor();
+        } catch (IOException ex) {
             LOG.catching(ex);
-            throw new LogoutImpossibleException();
+        } catch (InterruptedException ex) {
+            LOG.catching(ex);
         }
         LOG.exit();
     }
+    
 }
