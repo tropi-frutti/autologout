@@ -57,19 +57,22 @@
                                   <type>file</type>
                                   <mapper>
                                     <type>perm</type>
-                                    <prefix>/usr/share/jdeb/lib</prefix>
+                                    <prefix>/usr/share/autologout</prefix>
                                     <user>loader</user>
                                     <group>loader</group>
                                   </mapper>
                                 </data>
 
                                 <data>
-                                  <type>link</type>
-                                  <symlink>true</symlink>
-                                  <linkName>/usr/share/java/jdeb.jar</linkName>
-                                  <linkTarget>/usr/share/jdeb/lib/${project.build.finalName}-jar-with-dependencies.jar</linkTarget>
+                                  <src>${basedir}/src/main/resources/request_logout.py</src>
+                                  <type>file</type>
+                                  <mapper>
+                                    <type>perm</type>
+                                    <prefix>/usr/share/autologout</prefix>
+                                    <user>loader</user>
+                                    <group>loader</group>
+                                  </mapper>
                                 </data>
-
                                 <data>
                                   <src>${basedir}/src/deb/init.d</src>
                                   <type>directory</type>
@@ -88,6 +91,7 @@
                                     <path>var/lib/${project.artifactId}</path>
                                     <path>var/log/${project.artifactId}</path>
                                     <path>var/run/${project.artifactId}</path>
+                                    <path>usr/share/${project.artifactId}</path>
                                   </paths>
                                   <mapper>
                                     <type>perm</type>

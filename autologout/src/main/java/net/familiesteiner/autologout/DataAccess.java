@@ -25,6 +25,15 @@ import org.slf4j.ext.XLoggerFactory;
  */
 public class DataAccess implements DataAccessInterface {
     String rootDirectory = null;
+    String configDirectory = null;
+
+    public String getConfigDirectory() {
+        return configDirectory;
+    }
+
+    public void setConfigDirectory(String configDirectory) {
+        this.configDirectory = configDirectory;
+    }
     private static XLogger LOG = XLoggerFactory.getXLogger(DataAccess.class);
 
     public String getRootDirectory() {
@@ -111,7 +120,7 @@ public class DataAccess implements DataAccessInterface {
         XStream xstream = new XStream();
         xstream.alias("userConfiguration", UserConfiguration.class);
         Set<UserConfiguration> result = new HashSet<UserConfiguration>();
-        File configFile = new File(this.rootDirectory, "autologout.xml");
+        File configFile = new File(this.rootDirectory, "config.xml");
         if (configFile.exists()) {
             LOG.debug("loading config from " + configFile.getAbsolutePath());
             List xstreamResult = (List) xstream.fromXML(configFile);
