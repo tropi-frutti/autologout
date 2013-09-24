@@ -57,6 +57,12 @@ public class SessionProcessor implements SessionProcessorInterface {
         LOG.entry();
         DateTime now = DateFactory.getInstance().now();
         
+        // initialize all sessions with inactive
+        for (Map.Entry<User, SessionSummary> entry : sessionSummaries.entrySet()) {
+            SessionSummary sessionSummary = entry.getValue();
+            sessionSummary.setActive(false);
+        }        
+        
 
         Set<User> users = this.dbusAdapter.identifyActiveSessions();
         for (User user : users) {
@@ -67,12 +73,12 @@ public class SessionProcessor implements SessionProcessorInterface {
                 this.sessionSummaries.put(user, sessionSummary);
             }
             sessionSummary.addActiveTime(now);
+            sessionSummary.setActive(true);
 
             LOG.info("active time: " + sessionSummary.countActiveMinutes());
        }
         
         for (Map.Entry<User, SessionSummary> entry : sessionSummaries.entrySet()) {
-            User user = entry.getKey();
             SessionSummary sessionSummary = entry.getValue();
 
             // delete online times from last week
@@ -189,9 +195,14 @@ public class SessionProcessor implements SessionProcessorInterface {
                             }
                         }
                         else {
-                            LOG.info("warning user to log out: " + user);                    
-                            sessionSummary.markAsWarned();
-                            this.dbusAdapter.requestLogout(user);
+                            if (sessionSummary.isActive()) {
+                                LOG.info("warning user to log out: " + user);                    
+                                sessionSummary.markAsWarned();
+                                this.dbusAdapter.requestLogout(user);
+                            }
+                            else {
+                                LOG.info("should be warned but already loged out: " + user);                                                    
+                            }
                         }
                     } catch (LogoutImpossibleException ex) {
                         LOG.catching(ex);

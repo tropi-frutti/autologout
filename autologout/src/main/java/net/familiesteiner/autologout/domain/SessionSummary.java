@@ -13,7 +13,6 @@ import net.familiesteiner.autologout.DateFactory;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
 import org.slf4j.ext.XLogger;
 import org.slf4j.ext.XLoggerFactory;
 
@@ -26,6 +25,18 @@ public class SessionSummary {
     private static XLogger LOG = XLoggerFactory.getXLogger(SessionSummary.class);
     User user;
     boolean dirty = false;
+    boolean active = false;
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        if (active != this.active) {
+            this.dirty = true;
+        }
+        this.active = active;
+    }
     Date warnTime;
     Date lockTime;
 
@@ -34,6 +45,7 @@ public class SessionSummary {
     }
 
     public void setLockTime(Date lockTime) {
+        this.dirty = true;
         this.lockTime = lockTime;
     }
     TreeSet<Date> activeTimes;
@@ -44,6 +56,7 @@ public class SessionSummary {
     }
 
     public void setWarnTime(Date warnTime) {
+        this.dirty = true;
         this.warnTime = warnTime;
     }
 
@@ -109,6 +122,7 @@ public class SessionSummary {
             if (new DateTime(date).isBefore(validUntil)) {
                 LOG.debug("remove " + date);
                 datesToRemove.add(date);
+                this.dirty = true;        
             }
         }
         this.activeTimes.removeAll(datesToRemove);

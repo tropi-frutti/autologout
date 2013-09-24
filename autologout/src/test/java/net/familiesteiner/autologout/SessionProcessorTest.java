@@ -104,6 +104,7 @@ public class SessionProcessorTest {
         SessionSummary sessionSummary = new SessionSummary(user);
         sessionSummary.addActiveTime(new DateTime(2013, 1, 1, 12, 10));
         sessionSummary.addActiveTime(new DateTime(2013, 1, 1, 12, 11));
+        sessionSummary.setActive(true);
         
         DateFactory.getInstance().setNow(new DateTime(2013, 1, 1, 12, 12));
         
