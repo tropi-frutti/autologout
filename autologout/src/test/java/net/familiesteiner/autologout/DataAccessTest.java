@@ -73,7 +73,7 @@ public class DataAccessTest {
      */
     @Test
     public void loadAllUserConfigurations() {
-        instance.setRootDirectory("src/test/resources/testdata");
+        instance.setConfigDirectory("src/test/resources/testdata");
         Set<UserConfiguration> result = instance.loadAllUserConfigurations();
         assertEquals("wrong number of elements", 2, result.size());
         assertTrue("user config 321 is not contained", result.contains(new UserConfiguration(new User(321))));

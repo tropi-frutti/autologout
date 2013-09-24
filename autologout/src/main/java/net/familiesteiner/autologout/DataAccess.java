@@ -120,7 +120,7 @@ public class DataAccess implements DataAccessInterface {
         XStream xstream = new XStream();
         xstream.alias("userConfiguration", UserConfiguration.class);
         Set<UserConfiguration> result = new HashSet<UserConfiguration>();
-        File configFile = new File(this.rootDirectory, "config.xml");
+        File configFile = new File(this.configDirectory, "config.xml");
         if (configFile.exists()) {
             LOG.debug("loading config from " + configFile.getAbsolutePath());
             List xstreamResult = (List) xstream.fromXML(configFile);

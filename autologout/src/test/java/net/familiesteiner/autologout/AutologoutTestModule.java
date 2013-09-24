@@ -32,5 +32,6 @@ public class AutologoutTestModule extends AbstractModule {
     DataAccessInterface provideDataAccessInterface() {
         DataAccess dataAccess = new DataAccess();
         dataAccess.setRootDirectory("./");
+        dataAccess.setConfigDirectory("./");
         return dataAccess;
     }}

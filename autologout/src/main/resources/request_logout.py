@@ -45,13 +45,12 @@ def terminate(uid, force):
     # connect to users's session bus; call session manager's Logout function
     if address != '':
         try:
-            print address
             session_bus = dbus.bus.BusConnection(address) 
             print 2
             session_manager = session_bus.get_object('org.gnome.SessionManager',
             '/org/gnome/SessionManager')
             print 3
-            if force != False:
+            if force == False:
                 i = dbus.UInt32(0)
                 session_manager.Logout(i)     # logout with cancel option
                 return True
@@ -63,6 +62,7 @@ def terminate(uid, force):
             print "Unexpected error: ", sys.exc_info()[0]
             return False            
     return False  
+
 # main
 
 parser = argparse.ArgumentParser(description='Log out a given user.')
@@ -74,8 +74,5 @@ parser.add_argument('--force', action='store_true',
 args = parser.parse_args()
 
 uid = int(args.uid[0])
-
-
-print args.force
 
 print terminate(uid, args.force)
