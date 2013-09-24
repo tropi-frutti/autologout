@@ -90,7 +90,7 @@ public class SessionProcessorTest {
     }
     
     @Test
-    public void testHandleExceededSessions_expiredUser() throws DBusException, LogoutImpossibleException {
+    public void testHandleExceededSessions_expiredUser_notWarned() throws DBusException, LogoutImpossibleException {
         SessionProcessor instance = new SessionProcessor(dbusAdapter, dataAccess);
         User user = new User(123);
         UserConfiguration userConfiguration = new UserConfiguration(user);
@@ -117,5 +117,67 @@ public class SessionProcessorTest {
 
         verify(dbusAdapter).requestLogout(user);
         verify(dbusAdapter, never()).forceLogout(user);
+    }
+    
+    @Test
+    public void testHandleExceededSessions_expiredUser_alreadyWarnedNotForced() throws DBusException, LogoutImpossibleException {
+        SessionProcessor instance = new SessionProcessor(dbusAdapter, dataAccess);
+        User user = new User(123);
+        UserConfiguration userConfiguration = new UserConfiguration(user);
+        userConfiguration.setAllowedFromHour(0);
+        userConfiguration.setAllowedFromMinute(0);
+        userConfiguration.setAllowedUntilHour(23);
+        userConfiguration.setAllowedUntilMinute(59);
+        userConfiguration.setWarningDelay(5);
+        userConfiguration.setOnlineLimit(1);
+        
+        SessionSummary sessionSummary = new SessionSummary(user);
+        sessionSummary.addActiveTime(new DateTime(2013, 1, 1, 12, 10));
+        sessionSummary.addActiveTime(new DateTime(2013, 1, 1, 12, 11));
+        sessionSummary.setWarnTime(new DateTime(2013, 1, 1, 12, 10).toDate());
+        
+        DateFactory.getInstance().setNow(new DateTime(2013, 1, 1, 12, 12));
+        
+        instance.userConfigurations = new HashMap<User, UserConfiguration>();
+        instance.userConfigurations.put(user, userConfiguration);
+        
+        instance.sessionSummaries = new HashMap<User, SessionSummary>();
+        instance.sessionSummaries.put(user, sessionSummary);
+        
+        instance.handleExceededSessions();
+
+        verify(dbusAdapter, never()).requestLogout(user);
+        verify(dbusAdapter, never()).forceLogout(user);
+    }
+    
+    @Test
+    public void testHandleExceededSessions_expiredUser_alreadyWarnedForced() throws DBusException, LogoutImpossibleException {
+        SessionProcessor instance = new SessionProcessor(dbusAdapter, dataAccess);
+        User user = new User(123);
+        UserConfiguration userConfiguration = new UserConfiguration(user);
+        userConfiguration.setAllowedFromHour(0);
+        userConfiguration.setAllowedFromMinute(0);
+        userConfiguration.setAllowedUntilHour(23);
+        userConfiguration.setAllowedUntilMinute(59);
+        userConfiguration.setWarningDelay(5);
+        userConfiguration.setOnlineLimit(1);
+        
+        SessionSummary sessionSummary = new SessionSummary(user);
+        sessionSummary.addActiveTime(new DateTime(2013, 1, 1, 12, 10));
+        sessionSummary.addActiveTime(new DateTime(2013, 1, 1, 12, 11));
+        sessionSummary.setWarnTime(new DateTime(2013, 1, 1, 12, 6).toDate());
+        
+        DateFactory.getInstance().setNow(new DateTime(2013, 1, 1, 12, 12));
+        
+        instance.userConfigurations = new HashMap<User, UserConfiguration>();
+        instance.userConfigurations.put(user, userConfiguration);
+        
+        instance.sessionSummaries = new HashMap<User, SessionSummary>();
+        instance.sessionSummaries.put(user, sessionSummary);
+        
+        instance.handleExceededSessions();
+
+        verify(dbusAdapter, never()).requestLogout(user);
+        verify(dbusAdapter).forceLogout(user);
     }
 }

@@ -128,7 +128,7 @@ public class SessionSummary {
         boolean result = false;        
         if (this.warnTime != null) {
             DateTime delayTimedOut = DateFactory.getInstance().now();
-            delayTimedOut.minusMinutes((int) delayInMinutes);
+            delayTimedOut = delayTimedOut.minusMinutes((int) delayInMinutes);
             DateTime warnDateTime = new DateTime(this.warnTime);
             if (delayTimedOut.isAfter(warnDateTime)) {
                 result = true;
