@@ -26,10 +26,17 @@ public class SessionSummary {
     private static XLogger LOG = XLoggerFactory.getXLogger(SessionSummary.class);
     User user;
     boolean dirty = false;
-    Date lastActive;
     Date warnTime;
+    Date lockTime;
+
+    public Date getLockTime() {
+        return lockTime;
+    }
+
+    public void setLockTime(Date lockTime) {
+        this.lockTime = lockTime;
+    }
     TreeSet<Date> activeTimes;
-    Date closeTime;
 
 
     public Date getWarnTime() {
@@ -43,8 +50,9 @@ public class SessionSummary {
     public void markAsWarned() {
         this.warnTime = DateFactory.getInstance().now().toDate();
     }
-    public Date getLastActive() {
-        return lastActive;
+
+    public void markAsLocked() {
+        this.lockTime = DateFactory.getInstance().now().toDate();
     }
 
     public boolean isDirty() {
@@ -91,7 +99,6 @@ public class SessionSummary {
         LOG.entry(activeTime);
         this.activeTimes.add(activeTime.toDate());
         this.dirty = true;
-        this.lastActive = activeTime.toDate();
         LOG.exit();
     }
 
@@ -124,6 +131,18 @@ public class SessionSummary {
         return result;
     }
     
+    public boolean isLockedToday() {
+        boolean result = false;
+        if (this.lockTime != null) {
+            LocalDate nowDate = new LocalDate(DateFactory.getInstance().now());
+            LocalDate lockDate = new LocalDate(this.lockTime);
+            if (nowDate.isEqual(lockDate)) {
+                result = true;
+            }
+        }
+        return result;
+    }
+
     public boolean isWarningDelayTimedOut(long delayInMinutes) {
         boolean result = false;        
         if (this.warnTime != null) {

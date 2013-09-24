@@ -16,4 +16,6 @@ public interface DBusAdapterInterface {
         public Set<User> identifyActiveSessions();
         public void requestLogout(User user) throws LogoutImpossibleException;
         public void forceLogout(User user) throws LogoutImpossibleException;
+        public void lock(User user);
+        public void unlock(User user);
 }

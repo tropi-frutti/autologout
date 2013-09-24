@@ -49,6 +49,7 @@ public class TimerService {
                 try {
                     sessionProcessor.calculateActiveTimes();
                     sessionProcessor.handleExceededSessions();
+                    sessionProcessor.reenableClosedSessions();
                     sessionProcessor.saveSessions();
                 }
                 catch (RuntimeException ex) {

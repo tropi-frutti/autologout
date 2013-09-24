@@ -74,6 +74,26 @@
                                   </mapper>
                                 </data>
                                 <data>
+                                  <src>${basedir}/src/main/resources/lock.sh</src>
+                                  <type>file</type>
+                                  <mapper>
+                                    <type>perm</type>
+                                    <prefix>/usr/share/autologout</prefix>
+                                    <user>loader</user>
+                                    <group>loader</group>
+                                  </mapper>
+                                </data>
+                                <data>
+                                  <src>${basedir}/src/main/resources/unlock.sh</src>
+                                  <type>file</type>
+                                  <mapper>
+                                    <type>perm</type>
+                                    <prefix>/usr/share/autologout</prefix>
+                                    <user>loader</user>
+                                    <group>loader</group>
+                                  </mapper>
+                                </data>
+                                <data>
                                   <src>${basedir}/src/deb/init.d</src>
                                   <type>directory</type>
                                   <mapper>

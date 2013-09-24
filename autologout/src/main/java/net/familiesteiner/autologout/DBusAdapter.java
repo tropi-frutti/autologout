@@ -144,19 +144,12 @@ public class DBusAdapter implements DBusAdapterInterface, DBusSigHandler<Seat.Se
         LOG.exit();
     }
     
-    private void logoutWithScript(User user, boolean force) {
-        LOG.entry();
-        StringBuilder command = new StringBuilder("/usr/share/autologout/request_logout.py");
-        if (force) {
-            command.append(" --force");
-        }
-        
-        command.append(" ");
-        command.append(user.getUid());
-        
+    private static int executeCommand(String command) {
+        LOG.entry(command);
+        int returnCode = -1;
         try {
             String line;
-            Process process = Runtime.getRuntime().exec(command.toString());
+            Process process = Runtime.getRuntime().exec(command);
             BufferedReader bri = new BufferedReader(new InputStreamReader(process.getInputStream()));
             BufferedReader bre = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             while((line = bri.readLine()) != null ) {
@@ -168,12 +161,44 @@ public class DBusAdapter implements DBusAdapterInterface, DBusSigHandler<Seat.Se
             }
             bre.close();
             
-            int returnCode = process.waitFor();
+            returnCode = process.waitFor();
         } catch (IOException ex) {
             LOG.catching(ex);
         } catch (InterruptedException ex) {
             LOG.catching(ex);
         }
+        
+        LOG.exit(returnCode);
+        return returnCode;
+    }
+    
+    private void logoutWithScript(User user, boolean force) {
+        LOG.entry(user, force);
+        StringBuilder command = new StringBuilder("/usr/share/autologout/request_logout.py");
+        if (force) {
+            command.append(" --force");
+        }
+        
+        command.append(" ");
+        command.append(user.getUid());
+        
+        executeCommand(command.toString());
+        LOG.exit();
+    }
+
+    public void lock(User user) {
+        LOG.entry(user);
+        
+        executeCommand("/usr/share/autologout/lock.sh " + user.getUid());
+
+        LOG.exit();
+    }
+
+    public void unlock(User user) {
+        LOG.entry(user);
+        
+        executeCommand("/usr/share/autologout/unlock.sh " + user.getUid());
+
         LOG.exit();
     }
     

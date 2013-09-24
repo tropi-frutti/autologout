@@ -69,7 +69,7 @@ public class SessionProcessorTest {
         userConfiguration.setAllowedUntilHour(23);
         userConfiguration.setAllowedUntilMinute(59);
         userConfiguration.setWarningDelay(5);
-        userConfiguration.setOnlineLimit(2);
+        userConfiguration.setOnlineLimit(3);
         
         SessionSummary sessionSummary = new SessionSummary(user);
         sessionSummary.addActiveTime(new DateTime(2013, 1, 1, 12, 10));

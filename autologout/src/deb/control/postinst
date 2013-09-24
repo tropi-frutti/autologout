@@ -3,3 +3,5 @@ chmod 755 /etc/init.d/autologout
 update-rc.d -f autologout defaults
 
 chmod 755 /usr/share/autologout/request_logout.py
+chmod 755 /usr/share/autologout/lock.sh
+chmod 755 /usr/share/autologout/unlock.sh

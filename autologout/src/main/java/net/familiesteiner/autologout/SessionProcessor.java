@@ -67,12 +67,17 @@ public class SessionProcessor implements SessionProcessorInterface {
                 this.sessionSummaries.put(user, sessionSummary);
             }
             sessionSummary.addActiveTime(now);
-            
-            // delete online times from last week
-            sessionSummary.clearOutdatedActiveTimes(DateFactory.getInstance().getStartOfWeek());
 
             LOG.info("active time: " + sessionSummary.countActiveMinutes());
        }
+        
+        for (Map.Entry<User, SessionSummary> entry : sessionSummaries.entrySet()) {
+            User user = entry.getKey();
+            SessionSummary sessionSummary = entry.getValue();
+
+            // delete online times from last week
+            sessionSummary.clearOutdatedActiveTimes(DateFactory.getInstance().getStartOfWeek());
+        }        
         LOG.exit();
     }
 
@@ -108,7 +113,40 @@ public class SessionProcessor implements SessionProcessorInterface {
 
     @Override
     public void reenableClosedSessions() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        LOG.entry();
+        for (Map.Entry<User, SessionSummary> entry : sessionSummaries.entrySet()) {
+            User user = entry.getKey();
+            SessionSummary sessionSummary = entry.getValue();
+            UserConfiguration userConfiguration = this.userConfigurations.get(user);
+            boolean unlock = false;
+            
+            // are there any users which are locked yesterday and can be unlocked again?
+            if (sessionSummary.getLockTime() != null) {
+                if (userConfiguration == null) {
+                    // user no longer under autologout observation
+                    unlock = true;
+                }
+                else {
+                    // 1. check if allowed now
+                    Interval allowedInterval = userConfiguration.getAllowedInterval();
+                    if (allowedInterval.containsNow() == true) {
+                        // 2. check if time sum has no longer exceeded
+                        long onlineLimit = userConfiguration.getOnlineLimit();
+                        long activeMinutes = sessionSummary.countActiveMinutes();
+                        if (activeMinutes < onlineLimit) {
+                            unlock = true;
+                        }
+                    }
+                }
+            }
+            
+            if (true == unlock) {
+                this.dbusAdapter.unlock(user);
+                sessionSummary.setLockTime(null);
+                sessionSummary.setWarnTime(null);
+            }
+        }
+        LOG.exit();
     }
 
     @Override
@@ -130,7 +168,7 @@ public class SessionProcessor implements SessionProcessorInterface {
                 // 2. check if time sum has exceeded
                 long onlineLimit = userConfiguration.getOnlineLimit();
                 long activeMinutes = sessionSummary.countActiveMinutes();
-                if (activeMinutes > onlineLimit) {
+                if (activeMinutes >= onlineLimit) {
                     logoutActionIdentified = true;
                 }
                 
@@ -145,6 +183,9 @@ public class SessionProcessor implements SessionProcessorInterface {
                             } else {                            
                                 LOG.info("forcing user to log out: " + user);                    
                                 this.dbusAdapter.forceLogout(user);
+                                this.dbusAdapter.lock(user);
+                                sessionSummary.markAsLocked();
+                                sessionSummary.setWarnTime(null);
                             }
                         }
                         else {
