@@ -30,7 +30,7 @@ public class TimerService {
     public SessionProcessorInterface getSessionProcessor() {
         return sessionProcessor;
     }
-    Timer timer = null;
+    static Timer timer = null;
     private static XLogger LOG = XLoggerFactory.getXLogger(TimerService.class);
     
     @Inject
@@ -69,5 +69,9 @@ public class TimerService {
         timer.cancel();
         this.sessionProcessor.saveSessions();
         LOG.exit();
+    }
+    
+    public static Timer getTimer() {
+        return timer;
     }
 }

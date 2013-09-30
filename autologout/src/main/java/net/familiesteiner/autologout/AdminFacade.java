@@ -1,5 +1,6 @@
 package net.familiesteiner.autologout;
 
+import java.util.Timer;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -34,9 +35,10 @@ public class AdminFacade {
     
     private void stopDaemon() {
         LOG.entry();
-        DaemonController daemonController = MainDaemon.getDaemonController();
-        if (null != daemonController) {
-            daemonController.shutdown();
+        Timer timer = TimerService.getTimer();
+        if (null != timer) {
+            LOG.debug("cancelling timer");
+            timer.cancel();
         }
         LOG.exit();
     }
