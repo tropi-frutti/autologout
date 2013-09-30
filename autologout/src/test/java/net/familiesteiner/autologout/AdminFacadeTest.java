@@ -3,13 +3,14 @@ package net.familiesteiner.autologout;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
 
 import org.glassfish.grizzly.http.server.HttpServer;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class AdminFacadeTest {
 
@@ -42,7 +43,9 @@ public class AdminFacadeTest {
      */
     @Test
     public void testGetIt() {
-        String responseMsg = target.path("adminfacade").request().get(String.class);
-        assertEquals("Switched off!", responseMsg);
+        String responseMsg = target.path("adminfacade").request().accept(MediaType.TEXT_PLAIN).get(String.class);
+        assertEquals(AdminFacade.RESULT, responseMsg);
+        responseMsg = target.path("adminfacade").request().accept(MediaType.TEXT_HTML).get(String.class);
+        assertTrue(responseMsg.startsWith("<html>"));
     }
 }
