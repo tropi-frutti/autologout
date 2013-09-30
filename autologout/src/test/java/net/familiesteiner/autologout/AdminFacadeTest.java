@@ -43,6 +43,6 @@ public class AdminFacadeTest {
     @Test
     public void testGetIt() {
         String responseMsg = target.path("adminfacade").request().get(String.class);
-        assertEquals("Got it!", responseMsg);
+        assertEquals("Switched off!", responseMsg);
     }
 }

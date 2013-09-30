@@ -5,6 +5,7 @@ import com.google.inject.Injector;
 import java.net.URI;
 import org.apache.commons.daemon.Daemon;
 import org.apache.commons.daemon.DaemonContext;
+import org.apache.commons.daemon.DaemonController;
 import org.apache.commons.daemon.DaemonInitException;
 import org.freedesktop.dbus.exceptions.DBusException;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -22,6 +23,7 @@ public class MainDaemon implements Daemon
     private static XLogger LOG = XLoggerFactory.getXLogger(MainDaemon.class);
     TimerService timerService;
     HttpServer server;
+    static DaemonController daemonController = null;
     
     // Base URI the Grizzly HTTP server will listen on
     public static final String BASE_URI = "http://localhost:8080/autologout/";
@@ -97,5 +99,9 @@ public class MainDaemon implements Daemon
         }
         
         LOG.exit();
+    }
+    
+    public static DaemonController getDaemonController() {
+        return daemonController;
     }
 }

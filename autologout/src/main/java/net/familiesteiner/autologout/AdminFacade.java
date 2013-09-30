@@ -4,12 +4,17 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import org.apache.commons.daemon.DaemonController;
+import org.slf4j.ext.XLogger;
+import org.slf4j.ext.XLoggerFactory;
 
 /**
  * Root resource (exposed at "myresource" path)
  */
 @Path("adminfacade")
 public class AdminFacade {
+    private static XLogger LOG = XLoggerFactory.getXLogger(AdminFacade.class);
+    static final String RESULT = "Autologout gestoppt";
 
     /**
      * Method handling HTTP GET requests. The returned object will be sent
@@ -19,7 +24,30 @@ public class AdminFacade {
      */
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    public String getIt() {
-        return "Got it!";
+    public String stopDaemonString() {
+        LOG.entry();
+        String result = RESULT;
+        stopDaemon();
+        LOG.exit(result);
+        return result;
+    }
+    
+    private void stopDaemon() {
+        LOG.entry();
+        DaemonController daemonController = MainDaemon.getDaemonController();
+        if (null != daemonController) {
+            daemonController.shutdown();
+        }
+        LOG.exit();
+    }
+    
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    public String stopDaemonHtml() {
+        String result = "<html> " + "<title>" + "Autologout ausschalten" + "</title>"
+          + "<body><h1>" + RESULT + "</body></h1>" + "</html> ";
+        stopDaemon();
+        LOG.exit(result);
+        return result;
     }
 }
