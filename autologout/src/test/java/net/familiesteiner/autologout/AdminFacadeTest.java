@@ -19,7 +19,7 @@ public class AdminFacadeTest {
     @Before
     public void setUp() throws Exception {
         // start the server
-        server = Main.startServer();
+        server = MainDaemon.startServer();
         // create the client
         Client c = ClientBuilder.newClient();
 
@@ -29,7 +29,7 @@ public class AdminFacadeTest {
         // --
         // c.configuration().enable(new org.glassfish.jersey.media.json.JsonJaxbFeature());
 
-        target = c.target(Main.BASE_URI);
+        target = c.target(MainDaemon.BASE_URI);
     }
 
     @After
